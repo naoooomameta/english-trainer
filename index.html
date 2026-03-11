@@ -1,0 +1,3976 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>English Mastery — 最強学習環境</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0d1117;--surface:#161b22;--surface2:#21262d;--border:#30363d;
+  --gold:#ffd700;--gold2:#ffb800;--green:#3fb950;--blue:#58a6ff;
+  --purple:#bc8cff;--red:#f85149;--orange:#ff7b2c;
+  --text:#e6edf3;--muted:#7d8590;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:"Nunito",sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
+
+/* ── TOP BAR ── */
+.topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:12px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+.logo{font-size:18px;font-weight:900;color:var(--gold);}
+.logo span{color:var(--text);}
+.stats-bar{display:flex;gap:16px;align-items:center;}
+.stat-chip{display:flex;align-items:center;gap:5px;background:var(--surface2);border:1px solid var(--border);padding:5px 12px;border-radius:20px;font-size:13px;font-weight:700;}
+.stat-chip .icon{font-size:16px;}
+.streak-chip{border-color:var(--orange)!important;color:var(--orange);}
+.xp-chip{border-color:var(--gold)!important;color:var(--gold);}
+.level-chip{border-color:var(--purple)!important;color:var(--purple);}
+
+/* ── NAV ── */
+nav{background:var(--surface);border-bottom:1px solid var(--border);padding:0 20px;display:flex;gap:4px;overflow-x:auto;}
+nav::-webkit-scrollbar{display:none;}
+.tab-btn{background:none;border:none;color:var(--muted);font-family:"Nunito",sans-serif;font-size:13px;font-weight:700;padding:12px 16px;cursor:pointer;border-bottom:3px solid transparent;transition:all .2s;white-space:nowrap;}
+.tab-btn:hover{color:var(--text);}
+.tab-btn.active{color:var(--gold);border-bottom-color:var(--gold);}
+
+/* ── MAIN ── */
+main{max-width:1100px;margin:0 auto;padding:28px 20px 80px;}
+.section{display:none;}.section.active{display:block;}
+
+/* ── DASHBOARD ── */
+.dash-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;margin-bottom:24px;}
+.dash-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px;text-align:center;}
+.dash-card .big{font-size:40px;font-weight:900;line-height:1;margin-bottom:4px;}
+.dash-card .label{font-size:12px;color:var(--muted);font-weight:700;letter-spacing:1px;text-transform:uppercase;}
+.dash-card.gold .big{color:var(--gold);}
+.dash-card.green .big{color:var(--green);}
+.dash-card.blue .big{color:var(--blue);}
+.dash-card.orange .big{color:var(--orange);}
+.dash-card.purple .big{color:var(--purple);}
+
+.level-bar-wrap{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px 24px;margin-bottom:24px;}
+.level-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
+.level-title{font-size:16px;font-weight:800;}
+.level-xp{font-size:13px;color:var(--muted);}
+.level-bar-bg{height:12px;background:var(--surface2);border-radius:8px;overflow:hidden;}
+.level-bar-fill{height:100%;background:linear-gradient(90deg,var(--gold2),var(--gold));border-radius:8px;transition:width .8s cubic-bezier(.34,1.56,.64,1);}
+
+.weak-section{background:var(--surface);border:1px solid var(--red);border-radius:14px;padding:20px 24px;margin-bottom:24px;}
+.weak-section h3{font-size:15px;font-weight:800;color:var(--red);margin-bottom:14px;}
+.weak-chips{display:flex;flex-wrap:wrap;gap:8px;}
+.weak-chip{background:rgba(248,81,73,.15);border:1px solid var(--red);color:var(--text);padding:6px 14px;border-radius:20px;font-size:13px;font-weight:700;cursor:pointer;transition:background .15s;}
+.weak-chip:hover{background:rgba(248,81,73,.3);}
+
+.recent-section{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px 24px;}
+.recent-section h3{font-size:15px;font-weight:800;color:var(--muted);margin-bottom:14px;}
+.activity-row{display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid var(--border);}
+.activity-row:last-child{border-bottom:none;}
+.act-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.act-text{flex:1;font-size:13px;}
+.act-text strong{display:block;font-weight:700;}
+.act-text span{color:var(--muted);font-size:12px;}
+.act-score{font-size:13px;font-weight:800;}
+
+/* ── VOCAB ── */
+.vocab-controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:16px;}
+.search-box{flex:1;min-width:200px;position:relative;}
+.search-box input{width:100%;padding:9px 14px 9px 38px;border:1.5px solid var(--border);border-radius:8px;font-family:"Nunito",sans-serif;font-size:14px;background:var(--surface);color:var(--text);}
+.search-box input:focus{outline:none;border-color:var(--gold);}
+.search-icon{position:absolute;left:11px;top:50%;transform:translateY(-50%);font-size:15px;}
+.word-count{font-family:"DM Mono",monospace;font-size:12px;color:var(--muted);white-space:nowrap;}
+.view-toggle{display:flex;gap:4px;}
+.view-btn{padding:7px 11px;border:1.5px solid var(--border);background:var(--surface2);border-radius:6px;font-size:14px;cursor:pointer;color:var(--muted);transition:all .15s;}
+.view-btn.active{background:var(--gold);color:#000;border-color:var(--gold);}
+.cat-scroll{overflow-x:auto;padding-bottom:4px;margin-bottom:16px;}
+.cat-scroll::-webkit-scrollbar{height:3px;}.cat-scroll::-webkit-scrollbar-thumb{background:var(--border);}
+.cat-pills{display:flex;gap:7px;width:max-content;}
+.cat-pill{padding:5px 13px;border-radius:20px;border:1.5px solid var(--border);background:var(--surface2);color:var(--muted);font-size:12px;cursor:pointer;transition:all .15s;font-family:"Nunito",sans-serif;white-space:nowrap;font-weight:700;}
+.cat-pill:hover,.cat-pill.active{background:var(--gold);color:#000;border-color:var(--gold);}
+
+.vocab-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px;}
+.vocab-card{background:var(--surface);border:1.5px solid var(--border);border-radius:10px;padding:14px;cursor:pointer;transition:all .2s;position:relative;user-select:none;}
+.vocab-card:hover{border-color:var(--gold);transform:translateY(-2px);}
+.vocab-card.flipped{border-color:var(--green);}
+.vocab-card.flipped .front{display:none;}.vocab-card.flipped .back{display:flex;}
+.vocab-card .back{display:none;flex-direction:column;justify-content:center;min-height:60px;}
+.vword{font-size:18px;font-weight:900;color:var(--text);margin-bottom:4px;}
+.vpos{display:inline-block;background:var(--surface2);font-size:10px;padding:2px 7px;border-radius:4px;color:var(--muted);font-weight:700;letter-spacing:.5px;}
+.vmeaning{font-size:15px;font-weight:800;color:var(--green);}
+.vcat{font-size:10px;color:var(--muted);margin-top:4px;font-family:"DM Mono",monospace;}
+.flip-hint{font-size:9px;color:var(--border);position:absolute;bottom:6px;right:8px;font-family:"DM Mono",monospace;}
+.speak-btn{position:absolute;top:8px;right:8px;background:none;border:none;cursor:pointer;font-size:14px;opacity:.5;transition:opacity .15s;padding:2px;}
+.speak-btn:hover{opacity:1;}
+.learned-badge{position:absolute;top:6px;left:6px;font-size:11px;}
+
+.vocab-list-wrap{display:none;background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;}
+.vocab-list-wrap.show{display:block;}
+.vocab-grid.hide{display:none;}
+.vlist-item{display:flex;align-items:center;padding:10px 16px;border-bottom:1px solid var(--border);gap:16px;}
+.vlist-item:last-child{border-bottom:none;}
+.vlist-item:hover{background:var(--surface2);}
+.vl-word{font-size:15px;font-weight:800;width:190px;flex-shrink:0;color:var(--text);}
+.vl-meaning{color:var(--green);font-weight:700;flex:1;font-size:14px;}
+.vl-cat{font-size:11px;color:var(--muted);font-family:"DM Mono",monospace;width:110px;text-align:right;}
+.vl-speak{background:none;border:none;cursor:pointer;font-size:14px;opacity:.4;padding:0 4px;}
+.vl-speak:hover{opacity:1;}
+
+.pagination{display:flex;align-items:center;justify-content:center;gap:7px;margin-top:20px;flex-wrap:wrap;}
+.page-btn{padding:7px 13px;border:1.5px solid var(--border);background:var(--surface2);border-radius:6px;font-size:13px;cursor:pointer;font-family:"DM Mono",monospace;transition:all .15s;color:var(--text);}
+.page-btn:hover,.page-btn.active{background:var(--gold);color:#000;border-color:var(--gold);}
+.page-btn:disabled{opacity:.3;cursor:not-allowed;}
+.page-info{font-size:12px;color:var(--muted);font-family:"DM Mono",monospace;}
+
+/* ── FLASHCARD MODE ── */
+.flashcard-mode{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:24px;margin-bottom:20px;}
+.fc-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;}
+.fc-title{font-size:15px;font-weight:800;color:var(--muted);}
+.fc-progress-wrap{display:flex;align-items:center;gap:10px;flex:1;margin:0 16px;}
+.fc-bar-bg{flex:1;height:8px;background:var(--surface2);border-radius:4px;overflow:hidden;}
+.fc-bar-fill{height:100%;background:var(--gold);border-radius:4px;transition:width .3s;}
+.fc-count{font-size:12px;color:var(--muted);font-family:"DM Mono",monospace;white-space:nowrap;}
+.fc-card{background:var(--surface2);border:1.5px solid var(--border);border-radius:12px;padding:40px 32px;text-align:center;margin-bottom:16px;cursor:pointer;min-height:200px;display:flex;flex-direction:column;justify-content:center;align-items:center;transition:all .2s;}
+.fc-card:hover{border-color:var(--gold);}
+.fc-card.revealed{border-color:var(--green);}
+.fc-word{font-size:42px;font-weight:900;color:var(--text);margin-bottom:8px;}
+.fc-hint{font-size:13px;color:var(--muted);}
+.fc-answer{font-size:28px;font-weight:800;color:var(--green);margin-top:16px;}
+.fc-cat-label{font-size:12px;color:var(--muted);margin-top:8px;font-family:"DM Mono",monospace;}
+.fc-speak{background:none;border:1.5px solid var(--border);padding:6px 14px;border-radius:8px;cursor:pointer;font-size:14px;color:var(--text);margin-top:12px;font-family:"Nunito",sans-serif;}
+.fc-speak:hover{border-color:var(--gold);color:var(--gold);}
+.fc-btns{display:flex;gap:10px;justify-content:center;}
+.fc-btn{padding:12px 28px;border:none;border-radius:10px;font-size:15px;font-weight:800;cursor:pointer;font-family:"Nunito",sans-serif;transition:all .15s;}
+.fc-btn.bad{background:rgba(248,81,73,.2);color:var(--red);border:1.5px solid var(--red);}
+.fc-btn.bad:hover{background:var(--red);color:#fff;}
+.fc-btn.ok{background:rgba(255,184,0,.15);color:var(--gold2);border:1.5px solid var(--gold2);}
+.fc-btn.ok:hover{background:var(--gold2);color:#000;}
+.fc-btn.good{background:rgba(63,185,80,.2);color:var(--green);border:1.5px solid var(--green);}
+.fc-btn.good:hover{background:var(--green);color:#000;}
+.fc-start-btn{padding:13px 32px;background:var(--gold);color:#000;border:none;border-radius:10px;font-size:15px;font-weight:800;cursor:pointer;font-family:"Nunito",sans-serif;}
+
+/* ── GRAMMAR ── */
+.grammar-list{display:grid;gap:12px;}
+.grammar-card{background:var(--surface);border:1.5px solid var(--border);border-radius:12px;overflow:hidden;transition:border-color .15s;}
+.grammar-card:hover{border-color:var(--blue);}
+.grammar-header{padding:16px 20px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;}
+.grammar-header-left{display:flex;align-items:center;gap:12px;}
+.grammar-num{font-family:"DM Mono",monospace;font-size:11px;color:var(--gold);width:22px;}
+.grammar-title{font-size:14px;font-weight:800;}
+.grammar-level{font-size:10px;padding:3px 8px;border-radius:10px;font-family:"DM Mono",monospace;font-weight:700;}
+.level-basic{background:rgba(63,185,80,.2);color:var(--green);}
+.level-mid{background:rgba(255,184,0,.2);color:var(--gold2);}
+.level-adv{background:rgba(188,140,255,.2);color:var(--purple);}
+.grammar-arrow{font-size:14px;color:var(--muted);transition:transform .25s;}
+.grammar-card.open .grammar-arrow{transform:rotate(180deg);}
+.grammar-card.open{border-color:var(--blue);}
+.grammar-body{display:none;padding:0 20px 20px;border-top:1px solid var(--border);}
+.grammar-card.open .grammar-body{display:block;}
+.grammar-rule{background:var(--surface2);color:var(--blue);font-family:"DM Mono",monospace;font-size:12px;padding:12px 16px;border-radius:8px;margin:14px 0 12px;line-height:1.7;white-space:pre-wrap;border-left:3px solid var(--blue);}
+.grammar-body p{color:var(--muted);font-size:13px;line-height:1.8;margin-bottom:12px;}
+.examples-block{display:grid;gap:7px;}
+.ex-item{background:var(--surface2);border-radius:8px;padding:10px 14px;border-left:3px solid var(--green);}
+.ex-en{font-size:13px;font-weight:700;margin-bottom:3px;color:var(--text);}
+.ex-jp{font-size:12px;color:var(--muted);}
+.ex-note{font-size:11px;color:var(--gold);margin-top:4px;}
+.ex-speak{background:none;border:none;cursor:pointer;font-size:12px;opacity:.5;padding:0;margin-left:4px;}
+.ex-speak:hover{opacity:1;}
+
+/* ── PHRASES ── */
+.scene-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;}
+.scene-btn{padding:7px 14px;border-radius:8px;border:1.5px solid var(--border);background:var(--surface2);color:var(--muted);font-size:12px;cursor:pointer;transition:all .18s;font-family:"Nunito",sans-serif;font-weight:700;}
+.scene-btn:hover,.scene-btn.active{background:var(--gold);color:#000;border-color:var(--gold);}
+.phrase-group{display:none;}.phrase-group.active{display:block;}
+.phrase-items{display:grid;gap:8px;}
+.phrase-item{background:var(--surface);border:1.5px solid var(--border);border-radius:10px;padding:16px 18px;transition:all .15s;}
+.phrase-item:hover{border-color:var(--gold);}
+.phrase-en-row{display:flex;align-items:flex-start;gap:8px;margin-bottom:5px;}
+.phrase-en{font-size:15px;font-weight:800;color:var(--text);flex:1;}
+.phrase-speak{background:none;border:1.5px solid var(--border);border-radius:6px;padding:3px 8px;cursor:pointer;font-size:12px;color:var(--muted);transition:all .15s;white-space:nowrap;}
+.phrase-speak:hover{border-color:var(--gold);color:var(--gold);}
+.phrase-jp{font-size:12px;color:var(--muted);margin-bottom:8px;}
+.phrase-tip{font-size:12px;background:var(--surface2);padding:7px 11px;border-radius:6px;color:var(--text);line-height:1.6;border-left:2px solid var(--gold);}
+.phrase-tip b{color:var(--gold);}
+
+/* ── QUIZ ── */
+.quiz-wrap{max-width:640px;margin:0 auto;}
+.quiz-mode-btns{display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;}
+.qmode-btn{flex:1;min-width:150px;padding:12px;border:1.5px solid var(--border);background:var(--surface2);border-radius:10px;font-family:"Nunito",sans-serif;font-size:13px;font-weight:800;cursor:pointer;color:var(--muted);transition:all .15s;text-align:center;}
+.qmode-btn:hover{border-color:var(--gold);color:var(--text);}
+.qmode-btn.active{background:var(--gold);color:#000;border-color:var(--gold);}
+.quiz-progress{display:flex;align-items:center;gap:12px;margin-bottom:20px;}
+.progress-bar{flex:1;height:8px;background:var(--surface2);border-radius:4px;overflow:hidden;}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--gold2),var(--gold));border-radius:4px;transition:width .4s;}
+.progress-text{font-size:12px;color:var(--muted);font-family:"DM Mono",monospace;white-space:nowrap;}
+.quiz-card{background:var(--surface);border:1.5px solid var(--border);border-radius:16px;padding:32px;text-align:center;min-height:260px;display:flex;flex-direction:column;justify-content:center;align-items:center;}
+.quiz-type-label{font-family:"DM Mono",monospace;font-size:10px;letter-spacing:2px;color:var(--gold);margin-bottom:14px;}
+.quiz-question{font-size:28px;font-weight:900;color:var(--text);margin-bottom:6px;}
+.quiz-hint{font-size:13px;color:var(--muted);margin-bottom:24px;}
+.quiz-speak{background:none;border:1.5px solid var(--border);border-radius:8px;padding:6px 14px;cursor:pointer;font-size:13px;color:var(--muted);margin-bottom:20px;font-family:"Nunito",sans-serif;}
+.quiz-speak:hover{border-color:var(--gold);color:var(--gold);}
+.quiz-options{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%;}
+.quiz-opt{padding:12px 14px;border-radius:10px;border:1.5px solid var(--border);background:var(--surface2);font-size:13px;cursor:pointer;transition:all .18s;font-family:"Nunito",sans-serif;font-weight:700;color:var(--text);}
+.quiz-opt:hover{border-color:var(--gold);color:var(--gold);}
+.quiz-opt.correct{background:rgba(63,185,80,.2);border-color:var(--green);color:var(--green);}
+.quiz-opt.wrong{background:rgba(248,81,73,.2);border-color:var(--red);color:var(--red);}
+.quiz-feedback{margin-top:16px;padding:12px 16px;border-radius:8px;font-size:13px;line-height:1.7;display:none;text-align:left;width:100%;}
+.quiz-feedback.show{display:block;}
+.quiz-feedback.correct{background:rgba(63,185,80,.15);color:var(--green);border:1px solid var(--green);}
+.quiz-feedback.wrong{background:rgba(248,81,73,.15);color:var(--red);border:1px solid var(--red);}
+.next-btn{margin-top:14px;padding:11px 30px;background:var(--gold);color:#000;border:none;border-radius:8px;font-size:14px;font-weight:800;cursor:pointer;font-family:"Nunito",sans-serif;display:none;}
+.next-btn.show{display:inline-block;}
+.score-card{display:none;text-align:center;padding:40px;background:var(--surface);border:1.5px solid var(--border);border-radius:16px;}
+.score-card.show{display:block;}
+.score-big{font-size:72px;font-weight:900;color:var(--gold);line-height:1;margin-bottom:8px;}
+.score-rank{font-size:32px;margin-bottom:8px;}
+.score-card p{color:var(--muted);font-size:14px;margin-bottom:20px;}
+.score-xp{color:var(--gold);font-size:18px;font-weight:800;margin-bottom:12px;}
+.restart-btn{padding:12px 32px;background:var(--gold);color:#000;border:none;border-radius:8px;font-size:14px;font-weight:800;cursor:pointer;font-family:"Nunito",sans-serif;}
+
+/* ── NOTIFICATIONS ── */
+.notif{position:fixed;top:70px;right:20px;z-index:999;display:flex;flex-direction:column;gap:8px;pointer-events:none;}
+.notif-item{background:var(--surface);border:1.5px solid var(--gold);border-radius:10px;padding:10px 16px;font-size:13px;font-weight:700;color:var(--gold);animation:slideIn .3s ease,fadeOut .3s ease 2.7s forwards;pointer-events:none;}
+@keyframes slideIn{from{transform:translateX(120px);opacity:0;}to{transform:translateX(0);opacity:1;}}
+@keyframes fadeOut{from{opacity:1;}to{opacity:0;}}
+
+/* ── SECTION HEADER ── */
+.section-header{margin-bottom:24px;}
+.section-header h2{font-size:26px;font-weight:900;margin-bottom:4px;}
+.section-header p{color:var(--muted);font-size:13px;}
+
+@media(max-width:600px){
+  .topbar{padding:10px 14px;}.stats-bar{gap:8px;}.stat-chip{padding:4px 8px;font-size:11px;}
+  nav{padding:0 12px;}main{padding:20px 12px 60px;}
+  .vocab-grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));}
+  .quiz-options{grid-template-columns:1fr;}.quiz-card{padding:22px 16px;}
+  .fc-word{font-size:30px;}.fc-btn{padding:10px 20px;font-size:13px;}
+  .vl-cat{display:none;}.vl-word{width:130px;}
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="logo">🌍 English<span>Mastery</span></div>
+  <div class="stats-bar">
+    <div class="stat-chip streak-chip"><span class="icon">🔥</span><span id="streakNum">0</span>日</div>
+    <div class="stat-chip xp-chip"><span class="icon">⚡</span><span id="xpNum">0</span> XP</div>
+    <div class="stat-chip level-chip"><span class="icon">⭐</span>Lv.<span id="levelNum">1</span></div>
+  </div>
+</div>
+
+<nav>
+  <button class="tab-btn active" id="tab-dash" onclick="showTab('dash')">🏠 ホーム</button>
+  <button class="tab-btn" id="tab-flash" onclick="showTab('flash')">🃏 フラッシュカード</button>
+  <button class="tab-btn" id="tab-vocab" onclick="showTab('vocab')">📖 単語帳</button>
+  <button class="tab-btn" id="tab-grammar" onclick="showTab('grammar')">✏️ 文法</button>
+  <button class="tab-btn" id="tab-phrases" onclick="showTab('phrases')">💬 フレーズ</button>
+  <button class="tab-btn" id="tab-quiz" onclick="showTab('quiz')">🎯 テスト</button>
+</nav>
+
+<div class="notif" id="notifArea"></div>
+
+<main>
+
+<!-- DASHBOARD -->
+<section id="dash" class="section active">
+  <div class="section-header"><h2>ようこそ！今日も学習しよう 💪</h2><p>毎日少しずつ続けることが英語上達の一番の近道です。</p></div>
+  <div class="dash-grid">
+    <div class="dash-card gold"><div class="big" id="dTotalStudied">0</div><div class="label">学習済み単語</div></div>
+    <div class="dash-card green"><div class="big" id="dAccuracy">—</div><div class="label">正答率</div></div>
+    <div class="dash-card orange"><div class="big" id="dStreak">0</div><div class="label">連続学習日数🔥</div></div>
+    <div class="dash-card blue"><div class="big" id="dQuizDone">0</div><div class="label">テスト完了回数</div></div>
+    <div class="dash-card purple"><div class="big" id="dWeakCount">0</div><div class="label">要復習単語</div></div>
+  </div>
+  <div class="level-bar-wrap">
+    <div class="level-header">
+      <div class="level-title">⭐ Level <span id="lvlTitle">1</span> — <span id="lvlName">Beginner</span></div>
+      <div class="level-xp"><span id="lvlCurXP">0</span> / <span id="lvlNextXP">100</span> XP</div>
+    </div>
+    <div class="level-bar-bg"><div class="level-bar-fill" id="lvlBar" style="width:0%"></div></div>
+  </div>
+  <div class="weak-section" id="weakSection" style="display:none">
+    <h3>⚠️ 要復習単語（間違えた単語）</h3>
+    <div class="weak-chips" id="weakChips"></div>
+  </div>
+  <div class="recent-section">
+    <h3>📊 最近の学習記録</h3>
+    <div id="activityLog"><div style="color:var(--muted);font-size:13px;">まだ学習記録がありません。フラッシュカードやテストを始めましょう！</div></div>
+  </div>
+</section>
+
+<!-- FLASHCARD -->
+<section id="flash" class="section">
+  <div class="section-header"><h2>🃏 フラッシュカード</h2><p>知ってた・あいまい・知らないで仕分けしながら覚えよう。間違えた単語は自動的に再出題されます。</p></div>
+  <div class="flashcard-mode" id="fcArea">
+    <div style="text-align:center;padding:20px">
+      <div style="font-size:48px;margin-bottom:16px">🃏</div>
+      <div style="font-size:18px;font-weight:800;margin-bottom:8px">フラッシュカード学習</div>
+      <div style="color:var(--muted);font-size:14px;margin-bottom:20px">カテゴリを選んでスタート！間違えた単語は自動的に繰り返し出題されます。</div>
+      <div class="cat-scroll" style="margin-bottom:16px"><div class="cat-pills" id="fcCatPills"></div></div>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+        <button class="fc-start-btn" onclick="startFC('all')">🌍 全単語でスタート</button>
+        <button class="fc-start-btn" style="background:var(--red)" onclick="startFC('weak')">⚠️ 要復習のみ</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- VOCAB -->
+<section id="vocab" class="section">
+  <div class="section-header"><h2>📖 単語帳</h2><p>30カテゴリ・約3,000語。カードをクリックして意味を確認。🔊で発音を聞こう。</p></div>
+  <div class="vocab-controls">
+    <div class="search-box"><span class="search-icon">🔍</span><input type="text" id="searchInput" placeholder="英語または日本語で検索..." oninput="searchVocab()"></div>
+    <div class="word-count" id="wordCount">読み込み中...</div>
+    <div class="view-toggle">
+      <button class="view-btn active" id="gridViewBtn" onclick="setView('grid')">⊞</button>
+      <button class="view-btn" id="listViewBtn" onclick="setView('list')">☰</button>
+    </div>
+  </div>
+  <div class="cat-scroll"><div class="cat-pills" id="catPills"></div></div>
+  <div id="vocabGrid" class="vocab-grid"></div>
+  <div id="vocabListWrap" class="vocab-list-wrap"></div>
+  <div class="pagination" id="pagination"></div>
+</section>
+
+<!-- GRAMMAR -->
+<section id="grammar" class="section">
+  <div class="section-header"><h2>✏️ 英文法レッスン</h2><p>クリックして展開。例文の🔊で発音確認できます。</p></div>
+  <div class="grammar-list" id="grammarList"></div>
+</section>
+
+<!-- PHRASES -->
+<section id="phrases" class="section">
+  <div class="section-header"><h2>💬 海外実践フレーズ</h2><p>シーン別フレーズ集。🔊ボタンで実際の発音を確認しましょう。</p></div>
+  <div class="scene-tabs" id="sceneTabs"></div>
+  <div id="phraseArea"></div>
+</section>
+
+<!-- QUIZ -->
+<section id="quiz" class="section">
+  <div class="section-header"><h2>🎯 確認テスト</h2><p>テストを完了するとXPが獲得できます！</p></div>
+  <div class="quiz-wrap">
+    <div class="quiz-mode-btns">
+      <button class="qmode-btn active" id="qm-all" onclick="setQMode('all')">🌍 全問題</button>
+      <button class="qmode-btn" id="qm-weak" onclick="setQMode('weak')">⚠️ 要復習のみ</button>
+      <button class="qmode-btn" id="qm-vocab" onclick="setQMode('vocab')">📖 単語のみ</button>
+    </div>
+    <div class="quiz-progress">
+      <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+      <div class="progress-text" id="progressText">0 / 10</div>
+    </div>
+    <div id="quizCard" class="quiz-card"></div>
+    <div id="scoreCard" class="score-card"></div>
+  </div>
+</section>
+
+</main>
+
+<script>
+const VOCAB_DATA=[
+['departure','出発','travel'],
+['arrival','到着','travel'],
+['destination','目的地','travel'],
+['itinerary','旅程','travel'],
+['journey','旅','travel'],
+['trip','旅行','travel'],
+['voyage','航海・旅','travel'],
+['excursion','小旅行','travel'],
+['tour','ツアー','travel'],
+['route','ルート・経路','travel'],
+['direction','方向・方角','travel'],
+['map','地図','travel'],
+['guide','ガイド','travel'],
+['tourist','観光客','travel'],
+['sightseeing','観光','travel'],
+['landmark','名所','travel'],
+['attraction','見どころ','travel'],
+['souvenir','土産','travel'],
+['currency','通貨','travel'],
+['exchange','両替','travel'],
+['commission','手数料','travel'],
+['budget','予算','travel'],
+['expensive','高い','travel'],
+['affordable','手頃な','travel'],
+['cheap','安い','travel'],
+['discount','割引','travel'],
+['bargain','お得な','travel'],
+['tip','チップ','travel'],
+['receipt','レシート','travel'],
+['invoice','請求書','travel'],
+['cash','現金','travel'],
+['credit card','クレジットカード','travel'],
+['ATM','ATM','travel'],
+['bank','銀行','travel'],
+['insurance','保険','travel'],
+['visa','ビザ','travel'],
+['passport','パスポート','passport'],
+['customs','税関','travel'],
+['declaration','申告','travel'],
+['immigration','入国審査','travel'],
+['border','国境','travel'],
+['domestic','国内の','travel'],
+['international','国際の','travel'],
+['overseas','海外','travel'],
+['abroad','外国に','travel'],
+['local','地元の','travel'],
+['native','現地の','travel'],
+['foreign','外国の','travel'],
+['culture','文化','travel'],
+['tradition','伝統','travel'],
+['custom','習慣','travel'],
+['language','言語','travel'],
+['translation','翻訳','travel'],
+['interpreter','通訳','travel'],
+['terminal','ターミナル','airport'],
+['gate','ゲート','airport'],
+['boarding','搭乗','airport'],
+['check-in','チェックイン','airport'],
+['check-out','チェックアウト','airport'],
+['boarding pass','搭乗券','airport'],
+['ticket','チケット','airport'],
+['flight','フライト','airport'],
+['airline','航空会社','airport'],
+['aircraft','航空機','airport'],
+['pilot','パイロット','airport'],
+['crew','乗務員','airport'],
+['cabin','機内','airport'],
+['seat','座席','airport'],
+['aisle','通路','airport'],
+['window','窓側','airport'],
+['overhead bin','頭上の収納','airport'],
+['tray table','テーブル','airport'],
+['seatbelt','シートベルト','airport'],
+['takeoff','離陸','airport'],
+['landing','着陸','airport'],
+['turbulence','乱気流','airport'],
+['delay','遅延','airport'],
+['cancellation','キャンセル','airport'],
+['transfer','乗り換え','airport'],
+['transit','乗り継ぎ','airport'],
+['layover','立ち寄り','airport'],
+['connection','接続便','airport'],
+['departure lounge','出発ラウンジ','airport'],
+['arrivals','到着','airport'],
+['baggage','荷物','airport'],
+['luggage','スーツケース類','airport'],
+['carry-on','機内持込み','airport'],
+['checked bag','預け荷物','airport'],
+['baggage claim','手荷物受取','airport'],
+['carousel','ベルトコンベア','airport'],
+['overweight','超過重量','airport'],
+['security','セキュリティ','airport'],
+['screening','検査','airport'],
+['X-ray','X線','airport'],
+['metal detector','金属探知機','airport'],
+['customs form','税関申告書','airport'],
+['duty-free','免税','airport'],
+['shop','店','airport'],
+['currency exchange','両替所','airport'],
+['information desk','インフォメーション','airport'],
+['announcement','アナウンス','airport'],
+['queue','列','airport'],
+['passport control','パスポートコントロール','airport'],
+['stamp','スタンプ','airport'],
+['entry','入国','airport'],
+['reservation','予約','hotel'],
+['booking','予約','hotel'],
+['confirmation','確認','hotel'],
+['availability','空き状況','hotel'],
+['vacancy','空室','hotel'],
+['fully booked','満室','hotel'],
+['check-in','チェックイン','hotel'],
+['check-out','チェックアウト','hotel'],
+['lobby','ロビー','hotel'],
+['reception','フロント','hotel'],
+['concierge','コンシェルジュ','hotel'],
+['bellboy','ベルボーイ','hotel'],
+['room','部屋','hotel'],
+['suite','スイートルーム','hotel'],
+['single room','シングルルーム','hotel'],
+['double room','ダブルルーム','hotel'],
+['twin room','ツインルーム','hotel'],
+['floor','階','hotel'],
+['elevator','エレベーター','hotel'],
+['staircase','階段','hotel'],
+['hallway','廊下','hotel'],
+['key','鍵','hotel'],
+['key card','カードキー','hotel'],
+['safe','金庫','hotel'],
+['air conditioning','エアコン','hotel'],
+['heating','暖房','hotel'],
+['thermostat','温度調節器','hotel'],
+['Wi-Fi','Wi-Fi','hotel'],
+['password','パスワード','hotel'],
+['minibar','ミニバー','hotel'],
+['room service','ルームサービス','hotel'],
+['housekeeping','清掃','hotel'],
+['towel','タオル','hotel'],
+['bedding','寝具','hotel'],
+['pillow','枕','hotel'],
+['blanket','毛布','hotel'],
+['bathroom','バスルーム','hotel'],
+['shower','シャワー','hotel'],
+['bathtub','バスタブ','hotel'],
+['amenities','アメニティ','hotel'],
+['soap','石鹸','hotel'],
+['shampoo','シャンプー','hotel'],
+['breakfast','朝食','hotel'],
+['buffet','ビュッフェ','hotel'],
+['included','含まれている','hotel'],
+['extra charge','追加料金','hotel'],
+['late checkout','レイトチェックアウト','hotel'],
+['early checkin','アーリーチェックイン','hotel'],
+['pool','プール','hotel'],
+['gym','ジム','hotel'],
+['spa','スパ','hotel'],
+['view','眺め','hotel'],
+['ocean view','海の眺め','hotel'],
+['city view','市街の眺め','hotel'],
+['menu','メニュー','restaurant'],
+['appetizer','前菜','restaurant'],
+['main course','メインコース','restaurant'],
+['dessert','デザート','restaurant'],
+['side dish','サイドディッシュ','restaurant'],
+['special','本日のおすすめ','restaurant'],
+['recommendation','おすすめ','restaurant'],
+['order','注文','restaurant'],
+['waiter','ウェイター','restaurant'],
+['waitress','ウェイトレス','restaurant'],
+['chef','シェフ','restaurant'],
+['kitchen','キッチン','restaurant'],
+['table','テーブル','restaurant'],
+['booth','ブース席','restaurant'],
+['reservation','予約','restaurant'],
+['walk-in','予約なし来店','restaurant'],
+['seating','席','restaurant'],
+['capacity','収容人数','restaurant'],
+['portion','量・一人前','restaurant'],
+['serving','一人前','restaurant'],
+['plate','皿','restaurant'],
+['bowl','ボウル','restaurant'],
+['glass','グラス','restaurant'],
+['fork','フォーク','restaurant'],
+['knife','ナイフ','restaurant'],
+['spoon','スプーン','restaurant'],
+['chopsticks','箸','restaurant'],
+['napkin','ナプキン','restaurant'],
+['bill','勘定書き','restaurant'],
+['check','お会計','restaurant'],
+['tip','チップ','restaurant'],
+['split','割り勘','restaurant'],
+['takeout','持ち帰り','restaurant'],
+['delivery','デリバリー','restaurant'],
+['dine-in','店内飲食','restaurant'],
+['reservation','予約','restaurant'],
+['allergy','アレルギー','restaurant'],
+['vegetarian','菜食主義','restaurant'],
+['vegan','完全菜食','restaurant'],
+['gluten-free','グルテンフリー','restaurant'],
+['dairy-free','乳製品なし','restaurant'],
+['nut allergy','ナッツアレルギー','restaurant'],
+['medium','ミディアム','restaurant'],
+['rare','レア','restaurant'],
+['well-done','ウェルダン','restaurant'],
+['seasoning','調味料','restaurant'],
+['spicy','辛い','restaurant'],
+['mild','辛くない','restaurant'],
+['refill','おかわり','restaurant'],
+['water','水','restaurant'],
+['sparkling water','炭酸水','restaurant'],
+['beef','牛肉','food'],
+['pork','豚肉','food'],
+['chicken','鶏肉','food'],
+['lamb','羊肉','food'],
+['fish','魚','food'],
+['seafood','海鮮','food'],
+['shrimp','エビ','food'],
+['lobster','ロブスター','food'],
+['crab','カニ','food'],
+['salmon','サーモン','food'],
+['tuna','マグロ','food'],
+['cod','タラ','food'],
+['bread','パン','food'],
+['rice','ご飯','food'],
+['pasta','パスタ','food'],
+['noodles','麺','food'],
+['potato','じゃがいも','food'],
+['sweet potato','さつまいも','food'],
+['tomato','トマト','food'],
+['onion','玉ねぎ','food'],
+['garlic','にんにく','food'],
+['carrot','にんじん','food'],
+['cucumber','きゅうり','food'],
+['lettuce','レタス','food'],
+['spinach','ほうれん草','food'],
+['broccoli','ブロッコリー','food'],
+['mushroom','きのこ','food'],
+['pepper','ピーマン','food'],
+['corn','とうもろこし','food'],
+['beans','豆','food'],
+['apple','りんご','food'],
+['banana','バナナ','food'],
+['orange','オレンジ','food'],
+['grape','ぶどう','food'],
+['strawberry','いちご','food'],
+['blueberry','ブルーベリー','food'],
+['lemon','レモン','food'],
+['lime','ライム','food'],
+['mango','マンゴー','food'],
+['pineapple','パイナップル','food'],
+['watermelon','スイカ','food'],
+['peach','桃','food'],
+['cheese','チーズ','food'],
+['butter','バター','food'],
+['milk','牛乳','food'],
+['cream','クリーム','food'],
+['yogurt','ヨーグルト','food'],
+['egg','卵','food'],
+['flour','小麦粉','food'],
+['sugar','砂糖','food'],
+['salt','塩','food'],
+['pepper seasoning','黒胡椒','food'],
+['oil','油','food'],
+['vinegar','酢','food'],
+['soy sauce','醤油','food'],
+['sauce','ソース','food'],
+['dressing','ドレッシング','food'],
+['soup','スープ','food'],
+['salad','サラダ','food'],
+['sandwich','サンドイッチ','food'],
+['burger','ハンバーガー','food'],
+['pizza','ピザ','food'],
+['steak','ステーキ','food'],
+['sushi','寿司','food'],
+['ramen','ラーメン','food'],
+['curry','カレー','food'],
+['cake','ケーキ','food'],
+['cookie','クッキー','food'],
+['chocolate','チョコレート','food'],
+['ice cream','アイスクリーム','food'],
+['pudding','プリン','food'],
+['pie','パイ','food'],
+['store','店','shopping'],
+['shop','お店','shopping'],
+['mall','ショッピングモール','shopping'],
+['supermarket','スーパー','shopping'],
+['department store','デパート','shopping'],
+['boutique','ブティック','shopping'],
+['market','マーケット','shopping'],
+['pharmacy','薬局','shopping'],
+['bookstore','書店','shopping'],
+['price','価格','shopping'],
+['cost','費用','shopping'],
+['fee','料金','shopping'],
+['total','合計','shopping'],
+['subtotal','小計','shopping'],
+['tax','税金','shopping'],
+['sales tax','消費税','shopping'],
+['VAT','付加価値税','shopping'],
+['refund','返金','shopping'],
+['exchange','交換','shopping'],
+['return','返品','shopping'],
+['warranty','保証','shopping'],
+['receipt','レシート','shopping'],
+['bag','袋','shopping'],
+['packaging','梱包','shopping'],
+['size','サイズ','shopping'],
+['small','小','shopping'],
+['medium size','中','shopping'],
+['large','大','shopping'],
+['extra large','特大','shopping'],
+['fit','サイズが合う','shopping'],
+['try on','試着する','shopping'],
+['fitting room','フィッティングルーム','shopping'],
+['color','色','shopping'],
+['style','スタイル','shopping'],
+['design','デザイン','shopping'],
+['brand','ブランド','shopping'],
+['quality','品質','shopping'],
+['material','素材','shopping'],
+['fabric','生地','shopping'],
+['sale','セール','shopping'],
+['clearance','在庫処分','shopping'],
+['promotion','プロモーション','shopping'],
+['coupon','クーポン','shopping'],
+['loyalty card','ポイントカード','shopping'],
+['membership','会員','shopping'],
+['online shopping','オンライン購入','shopping'],
+['delivery','配送','shopping'],
+['shipping','発送','shopping'],
+['tracking','追跡','shopping'],
+['in stock','在庫あり','shopping'],
+['out of stock','在庫なし','shopping'],
+['routine','日課','daily'],
+['schedule','スケジュール','daily'],
+['appointment','予約・約束','daily'],
+['morning','朝','daily'],
+['afternoon','午後','daily'],
+['evening','夕方','daily'],
+['night','夜','daily'],
+['weekend','週末','daily'],
+['weekday','平日','daily'],
+['holiday','祝日','daily'],
+['vacation','休暇','daily'],
+['break','休憩','daily'],
+['commute','通勤','daily'],
+['traffic','交通','daily'],
+['rush hour','ラッシュアワー','daily'],
+['neighbor','隣人','daily'],
+['community','地域','daily'],
+['district','地区','daily'],
+['address','住所','daily'],
+['postcode','郵便番号','daily'],
+['street','通り','daily'],
+['avenue','大通り','daily'],
+['intersection','交差点','daily'],
+['traffic light','信号','daily'],
+['crosswalk','横断歩道','daily'],
+['sidewalk','歩道','daily'],
+['pedestrian','歩行者','daily'],
+['parking','駐車','daily'],
+['parking lot','駐車場','daily'],
+['garage','ガレージ','daily'],
+['rent','家賃・賃貸','daily'],
+['lease','リース・賃貸','daily'],
+['landlord','家主','daily'],
+['tenant','借主','daily'],
+['utilities','公共料金','daily'],
+['electricity','電気','daily'],
+['water bill','水道料金','daily'],
+['gas','ガス','daily'],
+['internet','インターネット','daily'],
+['phone plan','携帯プラン','daily'],
+['laundry','洗濯','daily'],
+['cleaning','掃除','daily'],
+['groceries','食料品','daily'],
+['errand','用事','daily'],
+['chore','家事','daily'],
+['recycle','リサイクル','daily'],
+['trash','ゴミ','daily'],
+['garbage','廃棄物','daily'],
+['neighborhood','近所','daily'],
+['suburb','郊外','daily'],
+['downtown','都心','daily'],
+['living room','リビング','home'],
+['bedroom','寝室','home'],
+['kitchen','台所','home'],
+['bathroom','浴室','home'],
+['dining room','ダイニング','home'],
+['hallway','玄関・廊下','home'],
+['balcony','バルコニー','home'],
+['garden','庭','home'],
+['basement','地下室','home'],
+['attic','屋根裏','home'],
+['ceiling','天井','home'],
+['floor','床','home'],
+['wall','壁','home'],
+['window','窓','home'],
+['door','ドア','home'],
+['sofa','ソファ','home'],
+['couch','ソファ','home'],
+['armchair','一人掛け椅子','home'],
+['table','テーブル','home'],
+['desk','机','home'],
+['chair','椅子','home'],
+['bed','ベッド','home'],
+['mattress','マットレス','home'],
+['wardrobe','ワードローブ','home'],
+['closet','クローゼット','home'],
+['shelf','棚','home'],
+['bookcase','本棚','home'],
+['drawer','引き出し','home'],
+['cabinet','キャビネット','home'],
+['mirror','鏡','home'],
+['lamp','ランプ','home'],
+['curtain','カーテン','home'],
+['rug','ラグ','home'],
+['refrigerator','冷蔵庫','home'],
+['oven','オーブン','home'],
+['microwave','電子レンジ','home'],
+['dishwasher','食洗機','home'],
+['washing machine','洗濯機','home'],
+['dryer','乾燥機','home'],
+['vacuum cleaner','掃除機','home'],
+['air purifier','空気清浄機','home'],
+['heater','ヒーター','home'],
+['television','テレビ','home'],
+['remote control','リモコン','home'],
+['speaker','スピーカー','home'],
+['light switch','電気スイッチ','home'],
+['outlet','コンセント','home'],
+['lock','鍵・錠','home'],
+['head','頭','body'],
+['face','顔','body'],
+['eye','目','body'],
+['ear','耳','body'],
+['nose','鼻','body'],
+['mouth','口','body'],
+['tooth','歯','body'],
+['tongue','舌','body'],
+['lip','唇','body'],
+['chin','あご','body'],
+['cheek','頬','body'],
+['forehead','額','body'],
+['neck','首','body'],
+['shoulder','肩','body'],
+['arm','腕','body'],
+['elbow','肘','body'],
+['wrist','手首','body'],
+['hand','手','body'],
+['finger','指','body'],
+['thumb','親指','body'],
+['chest','胸','body'],
+['back','背中','body'],
+['stomach','お腹','body'],
+['waist','ウエスト','body'],
+['hip','腰','body'],
+['leg','脚','body'],
+['knee','膝','body'],
+['ankle','足首','body'],
+['foot','足','body'],
+['toe','足指','body'],
+['skin','皮膚','body'],
+['hair','髪','body'],
+['nail','爪','body'],
+['muscle','筋肉','body'],
+['bone','骨','body'],
+['heart','心臓','body'],
+['lung','肺','body'],
+['liver','肝臓','body'],
+['kidney','腎臓','body'],
+['blood','血液','body'],
+['pressure','血圧','body'],
+['pulse','脈拍','body'],
+['healthy','健康な','body'],
+['fit','体が引き締まった','body'],
+['weight','体重','body'],
+['height','身長','body'],
+['BMI','BMI','body'],
+['calorie','カロリー','body'],
+['exercise','運動','body'],
+['stretch','ストレッチ','body'],
+['sleep','睡眠','body'],
+['rest','休息','body'],
+['diet','食事制限','body'],
+['nutrition','栄養','body'],
+['hospital','病院','medical'],
+['clinic','クリニック','medical'],
+['doctor','医師','medical'],
+['nurse','看護師','medical'],
+['surgeon','外科医','medical'],
+['specialist','専門医','medical'],
+['dentist','歯科医','medical'],
+['pharmacy','薬局','medical'],
+['pharmacist','薬剤師','medical'],
+['prescription','処方箋','medical'],
+['medicine','薬','medical'],
+['pill','錠剤','medical'],
+['tablet','錠剤','medical'],
+['capsule','カプセル','medical'],
+['syrup','シロップ','medical'],
+['injection','注射','medical'],
+['vaccine','ワクチン','medical'],
+['blood test','血液検査','medical'],
+['X-ray','レントゲン','medical'],
+['MRI','MRI','medical'],
+['diagnosis','診断','medical'],
+['symptom','症状','medical'],
+['pain','痛み','medical'],
+['fever','熱','medical'],
+['temperature','体温','medical'],
+['cough','咳','medical'],
+['cold','風邪','medical'],
+['flu','インフルエンザ','medical'],
+['headache','頭痛','medical'],
+['stomachache','腹痛','medical'],
+['nausea','吐き気','medical'],
+['vomit','嘔吐','medical'],
+['diarrhea','下痢','medical'],
+['allergy','アレルギー','medical'],
+['rash','発疹','medical'],
+['swelling','腫れ','medical'],
+['bleeding','出血','medical'],
+['wound','傷','medical'],
+['fracture','骨折','medical'],
+['sprain','捻挫','medical'],
+['surgery','手術','medical'],
+['anesthesia','麻酔','medical'],
+['recovery','回復','medical'],
+['bandage','包帯','medical'],
+['ointment','軟膏','medical'],
+['painkiller','痛み止め','medical'],
+['antibiotic','抗生物質','medical'],
+['insurance card','保険証','medical'],
+['emergency','緊急事態','emergency'],
+['help','助け','emergency'],
+['danger','危険','emergency'],
+['accident','事故','emergency'],
+['injury','怪我','emergency'],
+['ambulance','救急車','emergency'],
+['fire truck','消防車','emergency'],
+['police','警察','emergency'],
+['fire','火事','emergency'],
+['flood','洪水','emergency'],
+['earthquake','地震','emergency'],
+['evacuation','避難','emergency'],
+['shelter','避難所','emergency'],
+['lost','迷子・紛失','emergency'],
+['stolen','盗まれた','emergency'],
+['robbery','強盗','emergency'],
+['theft','窃盗','emergency'],
+['pickpocket','スリ','emergency'],
+['scam','詐欺','emergency'],
+['fraud','詐欺','emergency'],
+['suspicious','怪しい','emergency'],
+['missing','行方不明','emergency'],
+['missing person','行方不明者','emergency'],
+['complaint','苦情','emergency'],
+['report','届出','emergency'],
+['witness','目撃者','emergency'],
+['evidence','証拠','emergency'],
+['embassy','大使館','emergency'],
+['consulate','領事館','emergency'],
+['contact','連絡','emergency'],
+['insurance claim','保険請求','emergency'],
+['replacement','再発行','emergency'],
+['temporary','一時的な','emergency'],
+['urgent','緊急の','emergency'],
+['serious','深刻な','emergency'],
+['critical','危機的な','emergency'],
+['safe','安全な','emergency'],
+['rescue','救出','emergency'],
+['survivor','生存者','emergency'],
+['meeting','会議','business'],
+['conference','会議・カンファレンス','business'],
+['presentation','プレゼン','business'],
+['proposal','提案','business'],
+['contract','契約','business'],
+['agreement','合意','business'],
+['deadline','締め切り','business'],
+['project','プロジェクト','business'],
+['task','タスク','business'],
+['goal','目標','business'],
+['target','ターゲット','business'],
+['strategy','戦略','business'],
+['plan','計画','business'],
+['budget','予算','business'],
+['investment','投資','business'],
+['revenue','売上','business'],
+['profit','利益','business'],
+['loss','損失','business'],
+['expense','経費','business'],
+['salary','給与','business'],
+['bonus','ボーナス','business'],
+['promotion','昇進','business'],
+['resignation','辞職','business'],
+['recruitment','採用','business'],
+['interview','面接','business'],
+['resume','履歴書','business'],
+['reference','推薦状','business'],
+['colleague','同僚','business'],
+['supervisor','上司','business'],
+['subordinate','部下','business'],
+['client','クライアント','business'],
+['customer','顧客','business'],
+['vendor','取引先','business'],
+['supplier','サプライヤー','business'],
+['partner','パートナー','business'],
+['competitor','競合','business'],
+['market','市場','business'],
+['share','シェア','business'],
+['growth','成長','business'],
+['decline','減少','business'],
+['trend','トレンド','business'],
+['analysis','分析','business'],
+['report','報告書','business'],
+['data','データ','business'],
+['statistics','統計','business'],
+['feedback','フィードバック','business'],
+['review','レビュー','business'],
+['approval','承認','business'],
+['negotiation','交渉','business'],
+['compromise','妥協','business'],
+['deal','取引','business'],
+['computer','コンピュータ','tech'],
+['laptop','ノートPC','tech'],
+['smartphone','スマートフォン','tech'],
+['tablet','タブレット','tech'],
+['keyboard','キーボード','tech'],
+['mouse','マウス','tech'],
+['screen','画面','tech'],
+['monitor','モニター','tech'],
+['printer','プリンター','tech'],
+['scanner','スキャナー','tech'],
+['camera','カメラ','tech'],
+['microphone','マイク','tech'],
+['headphones','ヘッドフォン','tech'],
+['charger','充電器','tech'],
+['battery','バッテリー','tech'],
+['cable','ケーブル','tech'],
+['USB','USB','tech'],
+['Bluetooth','Bluetooth','tech'],
+['Wi-Fi','Wi-Fi','tech'],
+['internet','インターネット','tech'],
+['browser','ブラウザ','tech'],
+['website','ウェブサイト','tech'],
+['app','アプリ','tech'],
+['software','ソフトウェア','tech'],
+['download','ダウンロード','tech'],
+['upload','アップロード','tech'],
+['update','アップデート','tech'],
+['install','インストール','tech'],
+['password','パスワード','tech'],
+['account','アカウント','tech'],
+['email','メール','tech'],
+['attachment','添付ファイル','tech'],
+['spam','スパム','tech'],
+['cloud','クラウド','tech'],
+['storage','ストレージ','tech'],
+['backup','バックアップ','tech'],
+['virus','ウイルス','tech'],
+['security','セキュリティ','tech'],
+['encryption','暗号化','tech'],
+['social media','SNS','tech'],
+['post','投稿','tech'],
+['comment','コメント','tech'],
+['follow','フォロー','tech'],
+['like','いいね','tech'],
+['share','シェア','tech'],
+['video call','ビデオ通話','tech'],
+['conference call','電話会議','tech'],
+['notification','通知','tech'],
+['mountain','山','nature'],
+['hill','丘','nature'],
+['valley','谷','nature'],
+['river','川','nature'],
+['lake','湖','nature'],
+['ocean','海','nature'],
+['sea','海','nature'],
+['beach','ビーチ','nature'],
+['island','島','nature'],
+['forest','森','nature'],
+['jungle','ジャングル','nature'],
+['desert','砂漠','nature'],
+['plain','平原','nature'],
+['field','野原','nature'],
+['meadow','草原','nature'],
+['cliff','崖','nature'],
+['waterfall','滝','nature'],
+['cave','洞窟','nature'],
+['volcano','火山','nature'],
+['glacier','氷河','nature'],
+['canyon','峡谷','nature'],
+['wildlife','野生生物','nature'],
+['habitat','生息地','nature'],
+['ecosystem','生態系','nature'],
+['environment','環境','nature'],
+['climate','気候','nature'],
+['pollution','汚染','nature'],
+['emission','排出','nature'],
+['carbon','炭素','nature'],
+['renewable','再生可能な','nature'],
+['solar','太陽の','nature'],
+['wind power','風力','nature'],
+['recycling','リサイクル','nature'],
+['biodiversity','生物多様性','nature'],
+['extinction','絶滅','nature'],
+['conservation','保護','nature'],
+['sustainability','持続可能性','nature'],
+['organic','有機の','nature'],
+['natural','自然の','nature'],
+['soil','土壌','nature'],
+['rock','岩','nature'],
+['sand','砂','nature'],
+['wave','波','nature'],
+['tide','潮','nature'],
+['current','海流','nature'],
+['sunrise','日の出','nature'],
+['sunset','日の入り','nature'],
+['horizon','地平線','nature'],
+['sunny','晴れ','weather'],
+['cloudy','曇り','weather'],
+['rainy','雨','weather'],
+['snowy','雪','weather'],
+['windy','風の強い','weather'],
+['foggy','霧','weather'],
+['stormy','嵐','weather'],
+['thunder','雷','weather'],
+['lightning','稲妻','weather'],
+['hail','ひょう','weather'],
+['frost','霜','weather'],
+['humid','湿気の多い','weather'],
+['dry','乾燥した','weather'],
+['hot','暑い','weather'],
+['cold','寒い','weather'],
+['warm','暖かい','weather'],
+['cool','涼しい','weather'],
+['freezing','凍えるような','weather'],
+['temperature','気温','weather'],
+['degree','度','weather'],
+['forecast','天気予報','weather'],
+['season','季節','weather'],
+['spring','春','weather'],
+['summer','夏','weather'],
+['autumn','秋','weather'],
+['winter','冬','weather'],
+['monsoon','モンスーン','weather'],
+['typhoon','台風','weather'],
+['hurricane','ハリケーン','weather'],
+['tornado','竜巻','weather'],
+['drought','干ばつ','weather'],
+['flood','洪水','weather'],
+['blizzard','吹雪','weather'],
+['dog','犬','animals'],
+['cat','猫','animals'],
+['horse','馬','animals'],
+['cow','牛','animals'],
+['pig','豚','animals'],
+['sheep','羊','animals'],
+['goat','ヤギ','animals'],
+['chicken','鶏','animals'],
+['rabbit','ウサギ','animals'],
+['hamster','ハムスター','animals'],
+['fish','魚','animals'],
+['bird','鳥','animals'],
+['lion','ライオン','animals'],
+['tiger','トラ','animals'],
+['elephant','象','animals'],
+['giraffe','キリン','animals'],
+['zebra','シマウマ','animals'],
+['hippo','カバ','animals'],
+['rhino','サイ','animals'],
+['gorilla','ゴリラ','animals'],
+['chimpanzee','チンパンジー','animals'],
+['bear','クマ','animals'],
+['wolf','オオカミ','animals'],
+['fox','キツネ','animals'],
+['deer','シカ','animals'],
+['kangaroo','カンガルー','animals'],
+['koala','コアラ','animals'],
+['panda','パンダ','animals'],
+['penguin','ペンギン','animals'],
+['dolphin','イルカ','animals'],
+['whale','クジラ','animals'],
+['shark','サメ','animals'],
+['octopus','タコ','animals'],
+['eagle','ワシ','animals'],
+['owl','フクロウ','animals'],
+['parrot','オウム','animals'],
+['snake','ヘビ','animals'],
+['crocodile','ワニ','animals'],
+['frog','カエル','animals'],
+['butterfly','蝶','animals'],
+['bee','蜂','animals'],
+['ant','アリ','animals'],
+['spider','クモ','animals'],
+['mosquito','蚊','animals'],
+['fly','ハエ','animals'],
+['happy','幸せな','emotion'],
+['sad','悲しい','emotion'],
+['angry','怒った','emotion'],
+['excited','興奮した','emotion'],
+['nervous','緊張した','emotion'],
+['anxious','不安な','emotion'],
+['worried','心配した','emotion'],
+['scared','怖い','emotion'],
+['surprised','驚いた','emotion'],
+['confused','混乱した','emotion'],
+['disappointed','失望した','emotion'],
+['frustrated','フラストレーション','emotion'],
+['relieved','ほっとした','emotion'],
+['grateful','感謝している','emotion'],
+['proud','誇りに思う','emotion'],
+['ashamed','恥ずかしい','emotion'],
+['embarrassed','恥ずかしい','emotion'],
+['jealous','嫉妬した','emotion'],
+['lonely','孤独な','emotion'],
+['bored','退屈な','emotion'],
+['tired','疲れた','emotion'],
+['calm','穏やかな','emotion'],
+['peaceful','平和な','emotion'],
+['joyful','喜びに満ちた','emotion'],
+['optimistic','楽観的な','emotion'],
+['pessimistic','悲観的な','emotion'],
+['confident','自信のある','emotion'],
+['shy','恥ずかしがり屋な','emotion'],
+['outgoing','外向的な','emotion'],
+['friendly','友好的な','emotion'],
+['kind','親切な','emotion'],
+['generous','寛大な','emotion'],
+['selfish','わがままな','emotion'],
+['honest','正直な','emotion'],
+['trustworthy','信頼できる','emotion'],
+['reliable','頼りになる','emotion'],
+['patient','忍耐強い','emotion'],
+['impatient','せっかちな','emotion'],
+['stubborn','頑固な','emotion'],
+['flexible','柔軟な','emotion'],
+['creative','創造的な','emotion'],
+['ambitious','野心的な','emotion'],
+['hardworking','勤勉な','emotion'],
+['lazy','怠惰な','emotion'],
+['curious','好奇心旺盛な','emotion'],
+['empathetic','共感的な','emotion'],
+['compassionate','思いやりのある','emotion'],
+['cheerful','陽気な','emotion'],
+['school','学校','education'],
+['university','大学','education'],
+['college','大学・短大','education'],
+['classroom','教室','education'],
+['library','図書館','education'],
+['laboratory','実験室','education'],
+['teacher','教師','education'],
+['professor','教授','education'],
+['student','学生','education'],
+['pupil','生徒','education'],
+['graduate','卒業生','education'],
+['alumni','卒業生（複数）','education'],
+['lesson','授業','education'],
+['lecture','講義','education'],
+['seminar','ゼミ','education'],
+['exam','試験','education'],
+['test','テスト','education'],
+['quiz','小テスト','education'],
+['homework','宿題','education'],
+['assignment','課題','education'],
+['essay','エッセイ','education'],
+['thesis','論文','education'],
+['research','研究','education'],
+['study','勉強','education'],
+['learn','学ぶ','education'],
+['understand','理解する','education'],
+['memorize','暗記する','education'],
+['subject','科目','education'],
+['mathematics','数学','education'],
+['science','科学','education'],
+['history','歴史','education'],
+['geography','地理','education'],
+['literature','文学','education'],
+['art','芸術','education'],
+['music','音楽','education'],
+['physical education','体育','education'],
+['grade','成績','education'],
+['score','スコア','education'],
+['pass','合格','education'],
+['fail','不合格','education'],
+['scholarship','奨学金','education'],
+['tuition','授業料','education'],
+['degree','学位','education'],
+['diploma','卒業証書','education'],
+['certificate','資格証明書','education'],
+['football','サッカー（英）','sports'],
+['soccer','サッカー（米）','sports'],
+['basketball','バスケットボール','sports'],
+['baseball','野球','sports'],
+['tennis','テニス','sports'],
+['golf','ゴルフ','sports'],
+['swimming','水泳','sports'],
+['running','ランニング','sports'],
+['cycling','サイクリング','sports'],
+['volleyball','バレーボール','sports'],
+['rugby','ラグビー','sports'],
+['cricket','クリケット','sports'],
+['badminton','バドミントン','sports'],
+['table tennis','卓球','sports'],
+['boxing','ボクシング','sports'],
+['martial arts','武道','sports'],
+['yoga','ヨガ','sports'],
+['gym','ジム','sports'],
+['workout','トレーニング','sports'],
+['training','練習','sports'],
+['practice','練習','sports'],
+['coach','コーチ','sports'],
+['player','選手','sports'],
+['athlete','アスリート','sports'],
+['team','チーム','sports'],
+['match','試合','sports'],
+['game','試合・ゲーム','sports'],
+['competition','競技','sports'],
+['championship','選手権','sports'],
+['tournament','トーナメント','sports'],
+['score','スコア','sports'],
+['goal','ゴール','sports'],
+['point','ポイント','sports'],
+['win','勝つ','sports'],
+['lose','負ける','sports'],
+['draw','引き分け','sports'],
+['stadium','スタジアム','sports'],
+['court','コート','sports'],
+['field','フィールド','sports'],
+['pool','プール','sports'],
+['track','トラック','sports'],
+['equipment','用具','sports'],
+['painting','絵画','arts'],
+['drawing','デッサン','arts'],
+['sculpture','彫刻','arts'],
+['photography','写真','arts'],
+['film','映画','arts'],
+['theater','演劇','arts'],
+['concert','コンサート','arts'],
+['exhibition','展覧会','arts'],
+['gallery','ギャラリー','arts'],
+['museum','博物館','arts'],
+['library','図書館','arts'],
+['novel','小説','arts'],
+['poetry','詩','arts'],
+['comic','漫画','arts'],
+['animation','アニメ','arts'],
+['music','音楽','arts'],
+['song','歌','arts'],
+['melody','メロディー','arts'],
+['rhythm','リズム','arts'],
+['lyrics','歌詞','arts'],
+['guitar','ギター','arts'],
+['piano','ピアノ','arts'],
+['violin','バイオリン','arts'],
+['drums','ドラム','arts'],
+['cooking','料理','arts'],
+['baking','パン焼き・製菓','arts'],
+['gardening','ガーデニング','arts'],
+['hiking','ハイキング','arts'],
+['camping','キャンプ','arts'],
+['fishing','釣り','arts'],
+['travel','旅行','arts'],
+['reading','読書','arts'],
+['writing','執筆','arts'],
+['gaming','ゲーム','arts'],
+['board game','ボードゲーム','arts'],
+['puzzle','パズル','arts'],
+['knitting','編み物','arts'],
+['sewing','裁縫','arts'],
+['crafts','手工芸','arts'],
+['dancing','ダンス','arts'],
+['singing','歌','arts'],
+['acting','演技','arts'],
+['shirt','シャツ','clothing'],
+['T-shirt','Tシャツ','clothing'],
+['blouse','ブラウス','clothing'],
+['jacket','ジャケット','clothing'],
+['coat','コート','clothing'],
+['sweater','セーター','clothing'],
+['hoodie','パーカー','clothing'],
+['trousers','ズボン','clothing'],
+['jeans','ジーンズ','clothing'],
+['shorts','ショーツ','clothing'],
+['skirt','スカート','clothing'],
+['dress','ドレス','clothing'],
+['suit','スーツ','clothing'],
+['tie','ネクタイ','clothing'],
+['scarf','スカーフ','clothing'],
+['hat','帽子','clothing'],
+['cap','キャップ','clothing'],
+['gloves','手袋','clothing'],
+['socks','靴下','clothing'],
+['underwear','下着','clothing'],
+['shoes','靴','clothing'],
+['sneakers','スニーカー','clothing'],
+['boots','ブーツ','clothing'],
+['heels','ヒール','clothing'],
+['sandals','サンダル','clothing'],
+['slippers','スリッパ','clothing'],
+['belt','ベルト','clothing'],
+['bag','バッグ','clothing'],
+['purse','ハンドバッグ','clothing'],
+['backpack','バックパック','clothing'],
+['sunglasses','サングラス','clothing'],
+['watch','時計','clothing'],
+['jewelry','ジュエリー','clothing'],
+['necklace','ネックレス','clothing'],
+['ring','指輪','clothing'],
+['earrings','イヤリング','clothing'],
+['bracelet','ブレスレット','clothing'],
+['wallet','財布','clothing'],
+['umbrella','傘','clothing'],
+['car','車','transport'],
+['bus','バス','transport'],
+['train','電車','transport'],
+['subway','地下鉄','transport'],
+['taxi','タクシー','transport'],
+['bicycle','自転車','transport'],
+['motorcycle','バイク','transport'],
+['truck','トラック','transport'],
+['van','バン','transport'],
+['ferry','フェリー','transport'],
+['boat','ボート','transport'],
+['ship','船','transport'],
+['airplane','飛行機','transport'],
+['helicopter','ヘリコプター','transport'],
+['ride-share','ライドシェア','transport'],
+['station','駅','transport'],
+['platform','プラットフォーム','transport'],
+['stop','停留所','transport'],
+['terminal','ターミナル','transport'],
+['port','港','transport'],
+['harbor','港','transport'],
+['ticket','チケット','transport'],
+['fare','運賃','transport'],
+['pass','定期券','transport'],
+['route','路線','transport'],
+['timetable','時刻表','transport'],
+['schedule','時刻表','transport'],
+['departure','出発','transport'],
+['arrival','到着','transport'],
+['transfer','乗り換え','transport'],
+['direct','直通','transport'],
+['express','特急','transport'],
+['local','各駅停車','transport'],
+['speed','速度','transport'],
+['traffic','交通','transport'],
+['highway','高速道路','transport'],
+['toll','通行料','transport'],
+['GPS','GPS','transport'],
+['navigation','ナビ','transport'],
+['city','都市','places'],
+['town','町','places'],
+['village','村','places'],
+['capital','首都','places'],
+['country','国','places'],
+['region','地域','places'],
+['continent','大陸','places'],
+['airport','空港','places'],
+['station','駅','places'],
+['hospital','病院','places'],
+['school','学校','places'],
+['university','大学','places'],
+['church','教会','places'],
+['temple','寺院','places'],
+['mosque','モスク','places'],
+['museum','博物館','places'],
+['library','図書館','places'],
+['theater','劇場','places'],
+['cinema','映画館','places'],
+['stadium','スタジアム','places'],
+['park','公園','places'],
+['playground','遊び場','places'],
+['zoo','動物園','places'],
+['aquarium','水族館','places'],
+['restaurant','レストラン','places'],
+['café','カフェ','places'],
+['bar','バー','places'],
+['hotel','ホテル','places'],
+['hostel','ホステル','places'],
+['apartment','アパート','places'],
+['supermarket','スーパー','places'],
+['pharmacy','薬局','places'],
+['bank','銀行','places'],
+['post office','郵便局','places'],
+['police station','警察署','places'],
+['fire station','消防署','places'],
+['embassy','大使館','places'],
+['government','政府','places'],
+['court','裁判所','places'],
+['market','市場','places'],
+['factory','工場','places'],
+['office','オフィス','places'],
+['beautiful','美しい','adjective'],
+['ugly','醜い','adjective'],
+['big','大きい','adjective'],
+['small','小さい','adjective'],
+['tall','背が高い','adjective'],
+['short','短い・低い','adjective'],
+['long','長い','adjective'],
+['wide','広い','adjective'],
+['narrow','狭い','adjective'],
+['thick','厚い','adjective'],
+['thin','薄い','adjective'],
+['heavy','重い','adjective'],
+['light','軽い','adjective'],
+['fast','速い','adjective'],
+['slow','遅い','adjective'],
+['new','新しい','adjective'],
+['old','古い','adjective'],
+['young','若い','adjective'],
+['ancient','古代の','adjective'],
+['modern','現代の','adjective'],
+['traditional','伝統的な','adjective'],
+['popular','人気の','adjective'],
+['famous','有名な','adjective'],
+['unknown','未知の','adjective'],
+['common','一般的な','adjective'],
+['rare','珍しい','adjective'],
+['unique','独特な','adjective'],
+['simple','シンプルな','adjective'],
+['complex','複雑な','adjective'],
+['easy','簡単な','adjective'],
+['difficult','難しい','adjective'],
+['hard','困難な','adjective'],
+['soft','柔らかい','adjective'],
+['smooth','滑らかな','adjective'],
+['rough','粗い','adjective'],
+['sharp','鋭い','adjective'],
+['dull','鈍い','adjective'],
+['bright','明るい','adjective'],
+['dark','暗い','adjective'],
+['clean','清潔な','adjective'],
+['dirty','汚い','adjective'],
+['fresh','新鮮な','adjective'],
+['stale','古くなった','adjective'],
+['safe','安全な','adjective'],
+['dangerous','危険な','adjective'],
+['important','重要な','adjective'],
+['necessary','必要な','adjective'],
+['useful','役立つ','adjective'],
+['useless','役に立たない','adjective'],
+['interesting','面白い','adjective'],
+['boring','退屈な','adjective'],
+['amazing','素晴らしい','adjective'],
+['terrible','ひどい','adjective'],
+['wonderful','素晴らしい','adjective'],
+['awful','最悪な','adjective'],
+['perfect','完璧な','adjective'],
+['complete','完全な','adjective'],
+['go','行く','verb'],
+['come','来る','verb'],
+['leave','去る','verb'],
+['arrive','到着する','verb'],
+['return','戻る','verb'],
+['stay','泊まる・留まる','verb'],
+['travel','旅行する','verb'],
+['walk','歩く','verb'],
+['run','走る','verb'],
+['drive','運転する','verb'],
+['ride','乗る','verb'],
+['fly','飛ぶ','verb'],
+['eat','食べる','verb'],
+['drink','飲む','verb'],
+['cook','料理する','verb'],
+['buy','買う','verb'],
+['sell','売る','verb'],
+['pay','払う','verb'],
+['spend','使う','verb'],
+['save','貯める','verb'],
+['borrow','借りる','verb'],
+['lend','貸す','verb'],
+['give','与える','verb'],
+['take','取る','verb'],
+['bring','持ってくる','verb'],
+['carry','運ぶ','verb'],
+['hold','持つ','verb'],
+['put','置く','verb'],
+['get','得る','verb'],
+['find','見つける','verb'],
+['lose','失う・迷う','verb'],
+['need','必要とする','verb'],
+['want','欲しがる','verb'],
+['like','好む','verb'],
+['love','愛する','verb'],
+['hate','嫌う','verb'],
+['enjoy','楽しむ','verb'],
+['prefer','好む','verb'],
+['choose','選ぶ','verb'],
+['decide','決める','verb'],
+['plan','計画する','verb'],
+['prepare','準備する','verb'],
+['start','始める','verb'],
+['stop','止める','verb'],
+['continue','続ける','verb'],
+['finish','終える','verb'],
+['try','試みる','verb'],
+['succeed','成功する','verb'],
+['fail','失敗する','verb'],
+['help','助ける','verb'],
+['support','支援する','verb'],
+['ask','尋ねる','verb'],
+['answer','答える','verb'],
+['explain','説明する','verb'],
+['understand','理解する','verb'],
+['know','知っている','verb'],
+['remember','覚えている','verb'],
+['forget','忘れる','verb'],
+['learn','学ぶ','verb'],
+['teach','教える','verb'],
+['show','示す','verb'],
+['tell','伝える','verb'],
+['speak','話す','verb'],
+['say','言う','verb'],
+['write','書く','verb'],
+['read','読む','verb'],
+['listen','聞く','verb'],
+['hear','聞こえる','verb'],
+['see','見える','verb'],
+['look','見る','verb'],
+['watch','眺める','verb'],
+['meet','会う','verb'],
+['call','電話する','verb'],
+['contact','連絡する','verb'],
+['send','送る','verb'],
+['receive','受け取る','verb'],
+['open','開ける','verb'],
+['close','閉める','verb'],
+['check','確認する','verb'],
+['confirm','確認する','verb'],
+['book','予約する','verb'],
+['reserve','予約する','verb'],
+['cancel','キャンセルする','verb'],
+['change','変える','verb'],
+['wait','待つ','verb'],
+['hurry','急ぐ','verb'],
+['relax','リラックスする','verb'],
+['rest','休む','verb'],
+['sleep','眠る','verb'],
+['wake up','起きる','verb'],
+['think','考える','verb'],
+['believe','信じる','verb'],
+['feel','感じる','verb'],
+['seem','〜のようだ','verb'],
+['appear','現れる','verb'],
+['happen','起こる','verb'],
+['work','働く','verb'],
+['study','勉強する','verb'],
+['practice','練習する','verb'],
+['improve','改善する','verb'],
+['develop','発達する','verb'],
+['grow','成長する','verb'],
+['also','また','adverb'],
+['too','〜も','adverb'],
+['either','〜もまた（否定）','adverb'],
+['very','とても','adverb'],
+['quite','かなり','adverb'],
+['rather','どちらかというと','adverb'],
+['extremely','非常に','adverb'],
+['fairly','かなり','adverb'],
+['slightly','少し','adverb'],
+['almost','ほとんど','adverb'],
+['nearly','ほぼ','adverb'],
+['already','すでに','adverb'],
+['still','まだ','adverb'],
+['yet','まだ（否定・疑問）','adverb'],
+['just','ちょうど','adverb'],
+['soon','すぐに','adverb'],
+['immediately','すぐに','adverb'],
+['eventually','最終的に','adverb'],
+['finally','ついに','adverb'],
+['recently','最近','adverb'],
+['lately','最近','adverb'],
+['always','いつも','adverb'],
+['usually','たいてい','adverb'],
+['often','よく','adverb'],
+['sometimes','時々','adverb'],
+['rarely','めったに〜ない','adverb'],
+['never','決して〜ない','adverb'],
+['here','ここに','adverb'],
+['there','そこに','adverb'],
+['everywhere','どこでも','adverb'],
+['somewhere','どこかに','adverb'],
+['nowhere','どこにも〜ない','adverb'],
+['anywhere','どこかに','adverb'],
+['and','そして','adverb'],
+['but','しかし','adverb'],
+['or','または','adverb'],
+['so','だから','adverb'],
+['because','なぜなら','adverb'],
+['although','〜だけれども','adverb'],
+['however','しかしながら','adverb'],
+['therefore','それゆえ','adverb'],
+['moreover','さらに','adverb'],
+['furthermore','さらに','adverb'],
+['meanwhile','一方','adverb'],
+['otherwise','そうでなければ','adverb'],
+['unless','〜しない限り','adverb'],
+['until','〜まで','adverb'],
+['while','〜する間','adverb'],
+['when','〜するとき','adverb'],
+['if','もし〜なら','adverb'],
+['whether','〜かどうか','adverb'],
+['society','社会','social'],
+['community','コミュニティ','social'],
+['family','家族','social'],
+['friendship','友情','social'],
+['relationship','関係','social'],
+['marriage','結婚','social'],
+['divorce','離婚','social'],
+['children','子供','social'],
+['parent','親','social'],
+['sibling','兄弟姉妹','social'],
+['gender','性別','social'],
+['equality','平等','social'],
+['diversity','多様性','social'],
+['inclusion','包括','social'],
+['discrimination','差別','social'],
+['racism','人種差別','social'],
+['politics','政治','social'],
+['government','政府','social'],
+['election','選挙','social'],
+['vote','投票','social'],
+['democracy','民主主義','social'],
+['law','法律','social'],
+['rights','権利','social'],
+['freedom','自由','social'],
+['peace','平和','social'],
+['war','戦争','social'],
+['conflict','紛争','social'],
+['protest','抗議','social'],
+['movement','運動','social'],
+['charity','慈善','social'],
+['volunteer','ボランティア','social'],
+['poverty','貧困','social'],
+['wealth','富','social'],
+['inequality','不平等','social'],
+['healthcare','医療','social'],
+['welfare','福祉','social'],
+['religion','宗教','social'],
+['faith','信仰','social'],
+['philosophy','哲学','social'],
+['ethics','倫理','social'],
+['value','価値観','social'],
+['principle','原則','social'],
+['second','秒','time'],
+['minute','分','time'],
+['hour','時間','time'],
+['day','日','time'],
+['week','週','time'],
+['month','月','time'],
+['year','年','time'],
+['decade','10年','time'],
+['century','世紀','time'],
+['past','過去','time'],
+['present','現在','time'],
+['future','未来','time'],
+['yesterday','昨日','time'],
+['today','今日','time'],
+['tomorrow','明日','time'],
+['last week','先週','time'],
+['this week','今週','time'],
+['next week','来週','time'],
+['last year','昨年','time'],
+['this year','今年','time'],
+['next year','来年','time'],
+['Monday','月曜日','time'],
+['Tuesday','火曜日','time'],
+['Wednesday','水曜日','time'],
+['Thursday','木曜日','time'],
+['Friday','金曜日','time'],
+['Saturday','土曜日','time'],
+['Sunday','日曜日','time'],
+['January','1月','time'],
+['February','2月','time'],
+['March','3月','time'],
+['April','4月','time'],
+['May','5月','time'],
+['June','6月','time'],
+['July','7月','time'],
+['August','8月','time'],
+['September','9月','time'],
+['October','10月','time'],
+['November','11月','time'],
+['December','12月','time'],
+['noon','正午','time'],
+['midnight','真夜中','time'],
+['sunrise','日の出','time'],
+['sunset','日の入り','time'],
+['duration','期間','time'],
+['period','期間','time'],
+['moment','瞬間','time'],
+['deadline','締め切り','time'],
+['boil','茹でる','food2'],
+['fry','炒める・揚げる','food2'],
+['bake','焼く（オーブン）','food2'],
+['roast','ローストする','food2'],
+['grill','グリルする','food2'],
+['steam','蒸す','food2'],
+['simmer','弱火で煮る','food2'],
+['stir','かき混ぜる','food2'],
+['mix','混ぜる','food2'],
+['chop','刻む','food2'],
+['slice','薄切りにする','food2'],
+['dice','細かく刻む','food2'],
+['peel','皮をむく','food2'],
+['wash','洗う','food2'],
+['drain','水を切る','food2'],
+['season','味付けする','food2'],
+['marinate','漬け込む','food2'],
+['taste','味見する','food2'],
+['serve','提供する','food2'],
+['pour','注ぐ','food2'],
+['measure','計量する','food2'],
+['pan','フライパン','food2'],
+['pot','鍋','food2'],
+['wok','中華鍋','food2'],
+['oven','オーブン','food2'],
+['knife','包丁','food2'],
+['cutting board','まな板','food2'],
+['spatula','ヘラ','food2'],
+['ladle','おたま','food2'],
+['whisk','泡立て器','food2'],
+['colander','ざる','food2'],
+['bowl','ボウル','food2'],
+['plate','皿','food2'],
+['cup','カップ','food2'],
+['glass','グラス','food2'],
+['spoon','スプーン','food2'],
+['fork','フォーク','food2'],
+['chopstick','箸','food2'],
+['tongs','トング','food2'],
+['recipe','レシピ','food2'],
+['ingredient','材料','food2'],
+['portion','一人前','food2'],
+['calories','カロリー','food2'],
+['protein','タンパク質','food2'],
+['carbohydrate','炭水化物','food2'],
+['fat','脂質','food2'],
+['fiber','食物繊維','food2'],
+['vitamin','ビタミン','food2'],
+['excuse me','すみません','phrase'],
+['sorry','ごめんなさい','phrase'],
+['please','お願いします','phrase'],
+['thank you','ありがとう','phrase'],
+['you&#39;re welcome','どういたしまして','phrase'],
+['no problem','問題ありません','phrase'],
+['of course','もちろん','phrase'],
+['certainly','確かに','phrase'],
+['exactly','その通り','phrase'],
+['absolutely','絶対に','phrase'],
+['definitely','確実に','phrase'],
+['probably','たぶん','phrase'],
+['maybe','おそらく','phrase'],
+['perhaps','ひょっとすると','phrase'],
+['I think','〜と思う','phrase'],
+['I believe','〜と信じる','phrase'],
+['I suppose','〜と思う','phrase'],
+['I mean','つまり','phrase'],
+['in other words','言い換えると','phrase'],
+['for example','例えば','phrase'],
+['such as','〜のような','phrase'],
+['by the way','ところで','phrase'],
+['anyway','とにかく','phrase'],
+['actually','実は','phrase'],
+['honestly','正直に言うと','phrase'],
+['basically','基本的に','phrase'],
+['generally','一般的に','phrase'],
+['especially','特に','phrase'],
+['particularly','特に','phrase'],
+['mainly','主に','phrase'],
+['could you','〜していただけますか','phrase'],
+['would you','〜してくれますか','phrase'],
+['may I','〜してもいいですか','phrase'],
+['I&#39;d like','〜したいのですが','phrase'],
+['I need','〜が必要です','phrase'],
+['I want','〜が欲しいです','phrase'],
+['can you help','手伝えますか','phrase'],
+['how do I','どうやって〜しますか','phrase'],
+['where is','〜はどこですか','phrase'],
+['how much','いくらですか','phrase'],
+['what time','何時ですか','phrase'],
+['how long','どのくらいかかりますか','phrase'],
+['I don&#39;t understand','わかりません','phrase'],
+['could you repeat','繰り返してもらえますか','phrase'],
+['speak slowly','ゆっくり話してください','phrase'],
+['do you speak Japanese','日本語を話せますか','phrase'],
+['I speak a little','少し話せます','phrase'],
+['nice to meet you','はじめまして','phrase'],
+['suitcase','スーツケース','travel'],
+['backpack','バックパック','travel'],
+['carry-on bag','機内持込バッグ','travel'],
+['travel adapter','変換アダプター','travel'],
+['travel insurance','旅行保険','travel'],
+['travel agent','旅行代理店','travel'],
+['brochure','パンフレット','travel'],
+['leaflet','チラシ','travel'],
+['guide book','ガイドブック','travel'],
+['tourist map','観光マップ','travel'],
+['entrance fee','入場料','travel'],
+['admission','入場','travel'],
+['opening hours','営業時間','travel'],
+['closed','閉まっている','travel'],
+['reservation required','要予約','travel'],
+['photo spot','撮影スポット','travel'],
+['scenic view','景色','travel'],
+['panorama','パノラマ','travel'],
+['viewpoint','展望台','travel'],
+['hiking trail','ハイキングコース','travel'],
+['national park','国立公園','travel'],
+['heritage site','遺産地','travel'],
+['UNESCO','ユネスコ','travel'],
+['monument','記念碑','travel'],
+['statue','彫像','travel'],
+['ruins','遺跡','travel'],
+['castle','城','travel'],
+['palace','宮殿','travel'],
+['cathedral','大聖堂','travel'],
+['sacred','神聖な','travel'],
+['pilgrimage','巡礼','travel'],
+['conversation','会話','phrase'],
+['dialogue','対話','phrase'],
+['discussion','議論','phrase'],
+['debate','討論','phrase'],
+['argument','議論・口論','phrase'],
+['negotiation','交渉','phrase'],
+['agreement','合意','phrase'],
+['disagreement','不一致','phrase'],
+['misunderstanding','誤解','phrase'],
+['clarification','明確化','phrase'],
+['confirmation','確認','phrase'],
+['question','質問','phrase'],
+['answer','答え','phrase'],
+['reply','返答','phrase'],
+['response','反応','phrase'],
+['greeting','挨拶','phrase'],
+['introduction','自己紹介','phrase'],
+['farewell','別れの挨拶','phrase'],
+['compliment','褒め言葉','phrase'],
+['complaint','苦情','phrase'],
+['suggestion','提案','phrase'],
+['invitation','招待','phrase'],
+['apology','謝罪','phrase'],
+['gratitude','感謝','phrase'],
+['congratulations','おめでとう','phrase'],
+['condolences','お悔やみ','phrase'],
+['encouragement','励まし','phrase'],
+['good morning','おはようございます','phrase'],
+['good afternoon','こんにちは','phrase'],
+['good evening','こんばんは','phrase'],
+['good night','おやすみなさい','phrase'],
+['goodbye','さようなら','phrase'],
+['see you later','またね','phrase'],
+['take care','気をつけて','phrase'],
+['have a safe trip','よい旅を','phrase'],
+['enjoy your meal','お食事をお楽しみください','phrase'],
+['cheers','乾杯','phrase'],
+['bless you','お大事に（くしゃみ）','phrase'],
+['welcome','ようこそ','phrase'],
+['how are you','お元気ですか','phrase'],
+['fine thank you','元気です、ありがとう','phrase'],
+['I&#39;m sorry to hear that','それは残念でしたね','phrase'],
+['one','1・ひとつ','time'],
+['two','2・ふたつ','time'],
+['three','3・みっつ','time'],
+['four','4・よっつ','time'],
+['five','5・いつつ','time'],
+['six','6・むっつ','time'],
+['seven','7・ななつ','time'],
+['eight','8・やっつ','time'],
+['nine','9・ここのつ','time'],
+['ten','10・とお','time'],
+['hundred','百','time'],
+['thousand','千','time'],
+['million','百万','time'],
+['billion','十億','time'],
+['first','第一の','time'],
+['second num','第二の','time'],
+['third','第三の','time'],
+['last','最後の','time'],
+['single','一つの','time'],
+['double','二倍の','time'],
+['triple','三倍の','time'],
+['half','半分','time'],
+['quarter','4分の1','time'],
+['percent','パーセント','time'],
+['approximately','約','time'],
+['exactly','正確に','time'],
+['at least','少なくとも','time'],
+['at most','多くとも','time'],
+['more than','〜以上','time'],
+['less than','〜未満','time'],
+['meter','メートル','time'],
+['kilometer','キロメートル','time'],
+['mile','マイル','time'],
+['gram','グラム','time'],
+['kilogram','キログラム','time'],
+['liter','リットル','time'],
+['ounce','オンス','time'],
+['pound','ポンド','time'],
+['inch','インチ','time'],
+['foot measure','フィート','time'],
+['yard','ヤード','time'],
+['square meter','平方メートル','time'],
+['red','赤','adjective'],
+['blue','青','adjective'],
+['green','緑','adjective'],
+['yellow','黄色','adjective'],
+['orange color','オレンジ','adjective'],
+['purple','紫','adjective'],
+['pink','ピンク','adjective'],
+['brown','茶色','adjective'],
+['black','黒','adjective'],
+['white','白','adjective'],
+['gray','グレー','adjective'],
+['beige','ベージュ','adjective'],
+['navy','ネイビー','adjective'],
+['turquoise','ターコイズ','adjective'],
+['gold color','ゴールド','adjective'],
+['silver color','シルバー','adjective'],
+['transparent','透明な','adjective'],
+['opaque','不透明な','adjective'],
+['bright color','明るい色','adjective'],
+['dark color','暗い色','adjective'],
+['vivid','鮮やかな','adjective'],
+['pale','淡い','adjective'],
+['pastel','パステルカラー','adjective'],
+['neon','蛍光色','adjective'],
+['brave','勇敢な','emotion'],
+['cowardly','臆病な','emotion'],
+['wise','賢い','emotion'],
+['foolish','愚かな','emotion'],
+['intelligent','知的な','emotion'],
+['clever','賢い','emotion'],
+['smart','賢い・スマートな','emotion'],
+['dumb','鈍い','emotion'],
+['talented','才能のある','emotion'],
+['skilled','技術のある','emotion'],
+['experienced','経験豊富な','emotion'],
+['inexperienced','未経験の','emotion'],
+['mature','成熟した','emotion'],
+['immature','未熟な','emotion'],
+['responsible','責任感のある','emotion'],
+['irresponsible','無責任な','emotion'],
+['serious','まじめな','emotion'],
+['humorous','ユーモアのある','emotion'],
+['polite','礼儀正しい','emotion'],
+['rude','失礼な','emotion'],
+['modest','謙虚な','emotion'],
+['arrogant','傲慢な','emotion'],
+['humble','謙虚な','emotion'],
+['boastful','自慢する','emotion'],
+['positive','前向きな','emotion'],
+['negative','否定的な','emotion'],
+['passionate','情熱的な','emotion'],
+['indifferent','無関心な','emotion'],
+['determined','決意した','emotion'],
+['hesitant','ためらっている','emotion'],
+['focused','集中した','emotion'],
+['distracted','気が散った','emotion'],
+['motivated','やる気のある','emotion'],
+['demotivated','やる気のない','emotion'],
+['grateful feeling','感謝の気持ち','emotion'],
+['resentful','恨んでいる','emotion'],
+['physics','物理学','education'],
+['chemistry','化学','education'],
+['biology','生物学','education'],
+['economics','経済学','education'],
+['psychology','心理学','education'],
+['sociology','社会学','education'],
+['philosophy phil','哲学','education'],
+['law study','法学','education'],
+['medicine','医学','education'],
+['engineering','工学','education'],
+['computer science','コンピュータサイエンス','education'],
+['business admin','経営学','education'],
+['accounting','会計学','education'],
+['marketing','マーケティング','education'],
+['finance','財務','education'],
+['linguistics','言語学','education'],
+['anthropology','人類学','education'],
+['archaeology','考古学','education'],
+['statistics study','統計学','education'],
+['architecture','建築学','education'],
+['design study','デザイン学','education'],
+['fine arts','美術','education'],
+['drama','演劇学','education'],
+['media studies','メディア学','education'],
+['journalism','ジャーナリズム','education'],
+['political science','政治学','education'],
+['international relations','国際関係学','education'],
+['primary school','小学校','education'],
+['middle school','中学校','education'],
+['high school','高校','education'],
+['vocational school','職業学校','education'],
+['community college','短大','education'],
+['graduate school','大学院','education'],
+['academic','学術的な','education'],
+['theoretical','理論的な','education'],
+['practical','実践的な','education'],
+['headquarters','本社','business'],
+['branch','支店','business'],
+['subsidiary','子会社','business'],
+['startup','スタートアップ','business'],
+['entrepreneur','起業家','business'],
+['CEO','最高経営責任者','business'],
+['manager','マネージャー','business'],
+['director','取締役','business'],
+['executive','幹部','business'],
+['employee','従業員','business'],
+['staff','スタッフ','business'],
+['intern','インターン','business'],
+['freelancer','フリーランサー','business'],
+['consultant','コンサルタント','business'],
+['specialist','専門家','business'],
+['performance','パフォーマンス','business'],
+['productivity','生産性','business'],
+['efficiency','効率','business'],
+['innovation','イノベーション','business'],
+['disruption','破壊的革新','business'],
+['scalability','スケーラビリティ','business'],
+['launch','立ち上げ','business'],
+['rollout','展開','business'],
+['pivot','方向転換','business'],
+['benchmark','ベンチマーク','business'],
+['KPI','主要業績評価指標','business'],
+['ROI','投資対効果','business'],
+['stakeholder','利害関係者','business'],
+['shareholder','株主','business'],
+['board','取締役会','business'],
+['agenda','議題','business'],
+['minutes','議事録','business'],
+['follow-up','フォローアップ','business'],
+['action item','アクションアイテム','business'],
+['priority','優先事項','business'],
+['bottleneck','ボトルネック','business'],
+['mental health','メンタルヘルス','medical'],
+['stress','ストレス','medical'],
+['anxiety disorder','不安障害','medical'],
+['depression','うつ','medical'],
+['insomnia','不眠症','medical'],
+['fatigue','疲労','medical'],
+['burnout','燃え尽き症候群','medical'],
+['meditation','瞑想','medical'],
+['mindfulness','マインドフルネス','medical'],
+['therapy','療法','medical'],
+['counseling','カウンセリング','medical'],
+['psychologist','心理士','medical'],
+['checkup','健康診断','medical'],
+['prevention','予防','medical'],
+['immunity','免疫','medical'],
+['vaccination','予防接種','medical'],
+['quarantine','隔離','medical'],
+['isolation','隔離','medical'],
+['infection','感染','medical'],
+['contagious','感染性の','medical'],
+['chronic','慢性の','medical'],
+['acute','急性の','medical'],
+['terminal','末期の','medical'],
+['remission','寛解','medical'],
+['prognosis','予後','medical'],
+['rehabilitation','リハビリ','medical'],
+['physiotherapy','理学療法','medical'],
+['nutrition plan','栄養計画','medical'],
+['supplement','サプリメント','medical'],
+['hydration','水分補給','medical'],
+['atmosphere','大気','nature'],
+['oxygen','酸素','nature'],
+['carbon dioxide','二酸化炭素','nature'],
+['nitrogen','窒素','nature'],
+['hydrogen','水素','nature'],
+['molecule','分子','nature'],
+['atom','原子','nature'],
+['energy','エネルギー','nature'],
+['gravity','重力','nature'],
+['magnetic','磁気の','nature'],
+['electric','電気の','nature'],
+['chemical','化学的な','nature'],
+['reaction','反応','nature'],
+['experiment','実験','nature'],
+['hypothesis','仮説','nature'],
+['theory','理論','nature'],
+['evidence','証拠','nature'],
+['data','データ','nature'],
+['analysis','分析','nature'],
+['result','結果','nature'],
+['conclusion','結論','nature'],
+['global warming','地球温暖化','nature'],
+['greenhouse gas','温室効果ガス','nature'],
+['fossil fuel','化石燃料','nature'],
+['deforestation','森林破壊','nature'],
+['habitat loss','生息地喪失','nature'],
+['endangered','絶滅危惧の','nature'],
+['coral reef','サンゴ礁','nature'],
+['rainforest','熱帯雨林','nature'],
+['wetland','湿地','nature'],
+['permafrost','永久凍土','nature'],
+['sea level','海面','nature'],
+['erosion','侵食','nature'],
+['account','口座','business'],
+['savings','貯金','business'],
+['deposit','預金','business'],
+['withdrawal','引き出し','business'],
+['transfer money','送金','business'],
+['balance','残高','business'],
+['interest','利子','business'],
+['loan','ローン','business'],
+['mortgage','住宅ローン','business'],
+['debt','借金','business'],
+['credit','クレジット','business'],
+['creditworthy','信用のある','business'],
+['investment fund','投資ファンド','business'],
+['stock','株式','business'],
+['bond','債券','business'],
+['portfolio','ポートフォリオ','business'],
+['dividend','配当','business'],
+['capital','資本','business'],
+['asset','資産','business'],
+['liability','負債','business'],
+['net worth','純資産','business'],
+['inflation','インフレ','business'],
+['deflation','デフレ','business'],
+['recession','景気後退','business'],
+['GDP','国内総生産','business'],
+['trade','貿易','business'],
+['import','輸入','business'],
+['export','輸出','business'],
+['tariff','関税','business'],
+['embargo','輸出禁止','business'],
+['espresso','エスプレッソ','food'],
+['latte','ラテ','food'],
+['cappuccino','カプチーノ','food'],
+['green tea','緑茶','food'],
+['black tea','紅茶','food'],
+['herbal tea','ハーブティー','food'],
+['juice','ジュース','food'],
+['smoothie','スムージー','food'],
+['cocktail','カクテル','food'],
+['beer','ビール','food'],
+['wine','ワイン','food'],
+['whisky','ウイスキー','food'],
+['sake','日本酒','food'],
+['sparkling water drink','炭酸水','food'],
+['tap water','水道水','food'],
+['still water','ミネラルウォーター','food'],
+['portion control','量を調整する','food'],
+['leftovers','残り物','food'],
+['takeaway','テイクアウト','food'],
+['doggy bag','持ち帰り袋','food'],
+['food court','フードコート','food'],
+['fast food','ファストフード','food'],
+['street food','屋台料理','food'],
+['fine dining','高級料理','food'],
+['brunch','ブランチ','food'],
+['lunch box','お弁当','food'],
+['snack','スナック','food'],
+['appetizing','食欲をそそる','food'],
+['bland','味がない','food'],
+['flavorful','風味豊かな','food'],
+['savory','うまみのある','food'],
+['sweet taste','甘い','food'],
+['sour','酸っぱい','food'],
+['bitter','苦い','food'],
+['salty','塩辛い','food'],
+['umami','うま味','food'],
+['achieve','達成する','verb'],
+['accomplish','成し遂げる','verb'],
+['manage','管理する','verb'],
+['handle','対処する','verb'],
+['deal with','〜に対処する','verb'],
+['solve','解決する','verb'],
+['resolve','解決する','verb'],
+['fix','直す','verb'],
+['repair','修理する','verb'],
+['improve','改善する','verb'],
+['enhance','強化する','verb'],
+['optimize','最適化する','verb'],
+['reduce','減らす','verb'],
+['increase','増やす','verb'],
+['expand','拡大する','verb'],
+['shrink','縮小する','verb'],
+['maintain','維持する','verb'],
+['sustain','持続する','verb'],
+['protect','守る','verb'],
+['prevent','防ぐ','verb'],
+['avoid','避ける','verb'],
+['escape','逃げる','verb'],
+['hide','隠れる','verb'],
+['search','探す','verb'],
+['investigate','調査する','verb'],
+['research','研究する','verb'],
+['analyze','分析する','verb'],
+['compare','比較する','verb'],
+['evaluate','評価する','verb'],
+['estimate','推定する','verb'],
+['measure','測る','verb'],
+['test','テストする','verb'],
+['check verb','確認する','verb'],
+['observe','観察する','verb'],
+['notice','気づく','verb'],
+['realize','気づく・実現する','verb'],
+['recognize','認識する','verb'],
+['identify','特定する','verb'],
+['classify','分類する','verb'],
+['organize','整理する','verb'],
+['arrange','手配する','verb'],
+['schedule verb','スケジュールを立てる','verb'],
+['coordinate','調整する','verb'],
+['collaborate','協力する','verb'],
+['cooperate','協働する','verb'],
+['communicate','コミュニケーションを取る','verb'],
+['express','表現する','verb'],
+['describe','説明する','verb'],
+['report verb','報告する','verb'],
+['present verb','発表する','verb'],
+['demonstrate','実演する','verb'],
+['convince','説得する','verb'],
+['persuade','説得する','verb'],
+['recommend verb','おすすめする','verb'],
+['advise','アドバイスする','verb'],
+['warn','警告する','verb'],
+['remind','思い出させる','verb'],
+['inform','知らせる','verb'],
+['notify','通知する','verb'],
+['announce','発表する','verb'],
+['publish','出版する','verb'],
+['broadcast','放送する','verb'],
+['record','記録する','verb'],
+['document','記録する','verb'],
+['save file','保存する','verb'],
+['delete','削除する','verb'],
+['create','作成する','verb'],
+['design verb','デザインする','verb'],
+['build','構築する','verb'],
+['develop verb','開発する','verb'],
+['test verb','テストする','verb'],
+['launch verb','立ち上げる','verb'],
+['promote','宣伝する','verb'],
+['market verb','マーケティングする','verb'],
+['sell verb','売る','verb'],
+['negotiate','交渉する','verb'],
+['agree','同意する','verb'],
+['disagree','反対する','verb'],
+['approve','承認する','verb'],
+['reject','拒否する','verb'],
+['accept','受け入れる','verb'],
+['refuse','断る','verb'],
+['decline','断る','verb'],
+['respond','応答する','verb'],
+['react','反応する','verb'],
+['adapt','適応する','verb'],
+['adjust','調整する','verb'],
+['adopt','採用する','verb'],
+['implement','実施する','verb'],
+['execute','実行する','verb'],
+['complete','完了する','verb'],
+['submit','提出する','verb'],
+['deliver','届ける','verb'],
+['receive verb','受け取る','verb'],
+['confirm verb','確認する','verb'],
+['validate','検証する','verb'],
+['review verb','レビューする','verb'],
+['revise','修正する','verb'],
+['edit','編集する','verb'],
+['update verb','更新する','verb'],
+['upgrade','アップグレードする','verb'],
+['downgrade','ダウングレードする','verb'],
+['connect','接続する','verb'],
+['link','つなぐ','verb'],
+['integrate','統合する','verb'],
+['separate','分離する','verb'],
+['combine','組み合わせる','verb'],
+['split','分割する','verb'],
+['merge','合併する','verb'],
+['transfer','移す','verb'],
+['migrate','移行する','verb'],
+['import verb','インポートする','verb'],
+['export verb','エクスポートする','verb'],
+['sync','同期する','verb'],
+['backup verb','バックアップする','verb'],
+['restore','復元する','verb'],
+['reset','リセットする','verb'],
+['accurate','正確な','adjective'],
+['inaccurate','不正確な','adjective'],
+['precise','精密な','adjective'],
+['vague','曖昧な','adjective'],
+['clear','明確な','adjective'],
+['ambiguous','曖昧な','adjective'],
+['specific','具体的な','adjective'],
+['general','一般的な','adjective'],
+['abstract','抽象的な','adjective'],
+['concrete','具体的な','adjective'],
+['logical','論理的な','adjective'],
+['illogical','非論理的な','adjective'],
+['rational','合理的な','adjective'],
+['irrational','非合理的な','adjective'],
+['objective','客観的な','adjective'],
+['subjective','主観的な','adjective'],
+['reliable adj','信頼できる','adjective'],
+['unreliable','信頼できない','adjective'],
+['valid','有効な','adjective'],
+['invalid','無効な','adjective'],
+['legal','合法的な','adjective'],
+['illegal','違法な','adjective'],
+['ethical','倫理的な','adjective'],
+['unethical','非倫理的な','adjective'],
+['formal','正式な','adjective'],
+['informal','非公式の','adjective'],
+['official','公式の','adjective'],
+['unofficial','非公式の','adjective'],
+['public','公の','adjective'],
+['private','私的な','adjective'],
+['personal','個人的な','adjective'],
+['professional','プロの','adjective'],
+['amateur','アマチュアの','adjective'],
+['experienced adj','経験のある','adjective'],
+['qualified','資格のある','adjective'],
+['certified','認定された','adjective'],
+['standard','標準的な','adjective'],
+['exceptional','例外的な','adjective'],
+['outstanding','卓越した','adjective'],
+['mediocre','平凡な','adjective'],
+['average','平均的な','adjective'],
+['ordinary','普通の','adjective'],
+['extraordinary','非凡な','adjective'],
+['typical','典型的な','adjective'],
+['unusual','珍しい','adjective'],
+['normal','正常な','adjective'],
+['abnormal','異常な','adjective'],
+['natural adj','自然な','adjective'],
+['artificial','人工的な','adjective'],
+['genuine','本物の','adjective'],
+['fake','偽物の','adjective'],
+['original','オリジナルの','adjective'],
+['creative adj','創造的な','adjective'],
+['innovative','革新的な','adjective'],
+['traditional adj','伝統的な','adjective'],
+['conservative','保守的な','adjective'],
+['progressive','進歩的な','adjective'],
+['liberal','自由主義の','adjective'],
+['strict','厳しい','adjective'],
+['lenient','寛大な','adjective'],
+['flexible adj','柔軟な','adjective'],
+['rigid','硬直した','adjective'],
+['open-minded','開放的な','adjective'],
+['narrow-minded','偏狭な','adjective'],
+['broad','幅広い','adjective'],
+['limited','限られた','adjective'],
+['extensive','広範な','adjective'],
+['intensive','集中的な','adjective'],
+['comprehensive','包括的な','adjective'],
+['thorough','徹底的な','adjective'],
+['superficial','表面的な','adjective'],
+['deep','深い','adjective'],
+['shallow','浅い','adjective'],
+['profound','深遠な','adjective'],
+['trivial','些細な','adjective'],
+['significant','重要な','adjective'],
+['crucial','重大な','adjective'],
+['critical adj','重要な','adjective'],
+['vital','不可欠な','adjective'],
+['essential','本質的な','adjective'],
+['optional','任意の','adjective'],
+['mandatory','義務的な','adjective'],
+['voluntary','自発的な','adjective'],
+['compulsory','強制的な','adjective'],
+['platform','プラットフォーム','tech'],
+['algorithm','アルゴリズム','tech'],
+['data privacy','データプライバシー','tech'],
+['cybersecurity','サイバーセキュリティ','tech'],
+['hacker','ハッカー','tech'],
+['phishing','フィッシング','tech'],
+['two-factor auth','二段階認証','tech'],
+['firewall','ファイアウォール','tech'],
+['VPN','VPN','tech'],
+['streaming','ストリーミング','tech'],
+['podcast','ポッドキャスト','tech'],
+['vlog','ブログ動画','tech'],
+['influencer','インフルエンサー','tech'],
+['content creator','コンテンツクリエイター','tech'],
+['subscriber','購読者','tech'],
+['hashtag','ハッシュタグ','tech'],
+['trending','トレンド中','tech'],
+['viral','バイラル','tech'],
+['meme','ミーム','tech'],
+['thread','スレッド','tech'],
+['forum','フォーラム','tech'],
+['review online','オンラインレビュー','tech'],
+['rating','評価','tech'],
+['feedback form','フィードバックフォーム','tech'],
+['chatbot','チャットボット','tech'],
+['AI','人工知能','tech'],
+['machine learning','機械学習','tech'],
+['automation','自動化','tech'],
+['digital wallet','デジタルウォレット','tech'],
+['cryptocurrency','暗号通貨','tech'],
+['QR code','QRコード','tech'],
+['barcode','バーコード','tech'],
+['touchscreen','タッチスクリーン','tech'],
+['toothbrush','歯ブラシ','home'],
+['toothpaste','歯磨き粉','home'],
+['razor','かみそり','home'],
+['shaving cream','シェービングクリーム','home'],
+['deodorant','デオドラント','home'],
+['perfume','香水','home'],
+['lotion','ローション','home'],
+['sunscreen','日焼け止め','home'],
+['makeup','化粧品','home'],
+['lipstick','口紅','home'],
+['mascara','マスカラ','home'],
+['foundation','ファンデーション','home'],
+['nail polish','ネイルポリッシュ','home'],
+['hair dryer','ドライヤー','home'],
+['hair brush','ヘアブラシ','home'],
+['comb','くし','home'],
+['scissors','はさみ','home'],
+['needle','針','home'],
+['thread sewing','糸','home'],
+['button','ボタン','home'],
+['zipper','ジッパー','home'],
+['iron clothes','アイロン','home'],
+['hanger','ハンガー','home'],
+['detergent','洗剤','home'],
+['fabric softener','柔軟剤','home'],
+['bleach','漂白剤','home'],
+['sponge','スポンジ','home'],
+['mop','モップ','home'],
+['broom','ほうき','home'],
+['dustpan','チリトリ','home'],
+['trash bag','ゴミ袋','home'],
+['recycle bin','リサイクルボックス','home'],
+['compost','堆肥','home'],
+['birthday','誕生日','social'],
+['anniversary','記念日','social'],
+['graduation','卒業','social'],
+['wedding','結婚式','social'],
+['funeral','葬式','social'],
+['ceremony','式典','social'],
+['party','パーティー','social'],
+['celebration','お祝い','social'],
+['festival','祭り','social'],
+['concert event','コンサート','social'],
+['exhibition event','展覧会','social'],
+['conference event','会議','social'],
+['seminar event','セミナー','social'],
+['workshop','ワークショップ','social'],
+['networking','ネットワーキング','social'],
+['reunion','同窓会','social'],
+['gathering','集まり','social'],
+['meetup','ミートアップ','social'],
+['charity event','チャリティーイベント','social'],
+['fundraiser','募金活動','social'],
+['auction','オークション','social'],
+['raffle','くじ','social'],
+['ticket event','チケット','social'],
+['guest','ゲスト','social'],
+['host','ホスト','social'],
+['speaker','スピーカー','social'],
+['audience','聴衆','social'],
+['attendee','参加者','social'],
+['registration','登録','social'],
+['RSVP','返事','social'],
+['dress code','ドレスコード','social'],
+['formal attire','正装','social'],
+['casual dress','カジュアル','social'],
+['textbook','教科書','education'],
+['workbook','ワークブック','education'],
+['notebook','ノート','education'],
+['pencil','鉛筆','education'],
+['pen','ペン','education'],
+['highlighter','蛍光ペン','education'],
+['ruler','定規','education'],
+['calculator','電卓','education'],
+['compass math','コンパス','education'],
+['eraser','消しゴム','education'],
+['stapler','ホッチキス','education'],
+['file','ファイル','education'],
+['syllabus','シラバス','education'],
+['curriculum','カリキュラム','education'],
+['semester','学期','education'],
+['term','学期','education'],
+['enrollment','入学・登録','education'],
+['attendance','出席','education'],
+['tutor','家庭教師','education'],
+['mentor','メンター','education'],
+['peer','同期・仲間','education'],
+['campus','キャンパス','education'],
+['dormitory','寮','education'],
+['canteen','食堂','education'],
+['club','クラブ','education'],
+['committee','委員会','education'],
+['principal','校長','education'],
+['vice principal','副校長','education'],
+['dean','学部長','education'],
+['faculty','教員','education'],
+['department','学科','education'],
+['major','専攻','education'],
+['minor','副専攻','education'],
+['elective','選択科目','education'],
+['compulsory subject','必修科目','education'],
+['credit','単位','education'],
+['GPA','成績平均','education'],
+['ranking','ランキング','education'],
+['peer review','査読','education'],
+['citation','引用','education'],
+['bibliography','参考文献','education'],
+['plagiarism','盗用','education'],
+['abstract','要旨','education'],
+['methodology','方法論','education'],
+['survey','調査','education'],
+['interview research','インタビュー','education'],
+['sample','サンプル','education'],
+['finding','発見','education'],
+['publication','出版物','education'],
+['journal','学術誌','education'],
+['conference paper','学会論文','education'],
+['friend','友人','social'],
+['best friend','親友','social'],
+['acquaintance','知人','social'],
+['colleague work','同僚','social'],
+['boss','上司','social'],
+['employee soc','従業員','social'],
+['partner life','パートナー','social'],
+['spouse','配偶者','social'],
+['husband','夫','social'],
+['wife','妻','social'],
+['boyfriend','彼氏','social'],
+['girlfriend','彼女','social'],
+['fiancé','婚約者（男）','social'],
+['fiancée','婚約者（女）','social'],
+['ex','元交際相手','social'],
+['mother','母','social'],
+['father','父','social'],
+['grandmother','祖母','social'],
+['grandfather','祖父','social'],
+['daughter','娘','social'],
+['son','息子','social'],
+['sister','姉妹','social'],
+['brother','兄弟','social'],
+['aunt','叔母','social'],
+['uncle','叔父','social'],
+['cousin','いとこ','social'],
+['nephew','甥','social'],
+['niece','姪','social'],
+['baby','赤ちゃん','social'],
+['toddler','幼児','social'],
+['teenager','10代','social'],
+['adult','大人','social'],
+['elderly','高齢者','social'],
+['stranger','見知らぬ人','social'],
+['citizen','市民','social'],
+['foreigner soc','外国人','social'],
+['immigrant','移民','social'],
+['refugee','難民','social'],
+['resident','居住者','social'],
+['neighbor soc','隣人','social'],
+['landlord soc','家主','social'],
+['tenant soc','借主','social'],
+['north','北','travel'],
+['south','南','travel'],
+['east','東','travel'],
+['west','西','travel'],
+['northeast','北東','travel'],
+['northwest','北西','travel'],
+['southeast','南東','travel'],
+['southwest','南西','travel'],
+['center','中心','travel'],
+['suburb soc','郊外','travel'],
+['outskirts','郊外','travel'],
+['rural','田舎の','travel'],
+['urban','都市の','travel'],
+['metropolitan','大都市の','travel'],
+['population','人口','travel'],
+['continent geo','大陸','travel'],
+['hemisphere','半球','travel'],
+['equator','赤道','travel'],
+['latitude','緯度','travel'],
+['longitude','経度','travel'],
+['altitude','高度','travel'],
+['sea level geo','海抜','travel'],
+['tropics','熱帯','travel'],
+['arctic','北極の','travel'],
+['antarctic','南極の','travel'],
+['pacific','太平洋','travel'],
+['atlantic','大西洋','travel'],
+['indian ocean','インド洋','travel'],
+['mediterranean','地中海','travel'],
+['caribbean','カリブ海','travel'],
+['accountant','会計士','business'],
+['architect','建築家','business'],
+['artist','アーティスト','arts'],
+['astronaut','宇宙飛行士','business'],
+['athlete pro','アスリート','sports'],
+['attorney','弁護士','business'],
+['author','著者','arts'],
+['baker','パン職人','food2'],
+['banker','銀行員','business'],
+['barber','理容師','daily'],
+['carpenter','大工','home'],
+['chef pro','シェフ','restaurant'],
+['civil servant','公務員','business'],
+['coach pro','コーチ','sports'],
+['construction worker','建設作業員','home'],
+['designer','デザイナー','business'],
+['diplomat','外交官','social'],
+['driver','運転手','transport'],
+['electrician','電気技師','home'],
+['engineer','エンジニア','tech'],
+['farmer','農家','nature'],
+['firefighter','消防士','emergency'],
+['journalist','ジャーナリスト','social'],
+['judge','裁判官','social'],
+['lawyer','弁護士','social'],
+['mechanic','メカニック','transport'],
+['musician','ミュージシャン','arts'],
+['pilot pro','パイロット','airport'],
+['plumber','配管工','home'],
+['police officer','警察官','emergency'],
+['programmer','プログラマー','tech'],
+['receptionist','受付係','hotel'],
+['scientist','科学者','nature'],
+['security guard','警備員','emergency'],
+['soldier','兵士','social'],
+['surgeon pro','外科医','medical'],
+['teacher pro','教師','education'],
+['translator','翻訳者','travel'],
+['veterinarian','獣医','animals'],
+['waiter pro','ウェイター','restaurant'],
+['writer','作家','arts'],
+['invoice fin','請求書','business'],
+['quote','見積書','business'],
+['estimate fin','見積もり','business'],
+['payment','支払い','business'],
+['installment','分割払い','business'],
+['down payment','頭金','business'],
+['prepayment','前払い','business'],
+['late payment','支払い遅延','business'],
+['overdue','期限超過','business'],
+['penalty','ペナルティ','business'],
+['fine','罰金','business'],
+['surcharge','追加料金','business'],
+['rebate','リベート','business'],
+['cashback','キャッシュバック','business'],
+['reward','報酬','business'],
+['currency rate','為替レート','travel'],
+['appreciate','価値が上がる','business'],
+['depreciate','価値が下がる','business'],
+['inflation fin','インフレ','business'],
+['fiscal','財政の','business'],
+['monetary','通貨の','business'],
+['audit','監査','business'],
+['compliance','コンプライアンス','business'],
+['regulation','規制','social'],
+['apartment type','アパート','home'],
+['condominium','マンション','home'],
+['house','一軒家','home'],
+['studio','ワンルーム','home'],
+['penthouse','ペントハウス','home'],
+['terraced house','テラスハウス','home'],
+['detached house','独立住宅','home'],
+['shared house','シェアハウス','home'],
+['furnished','家具付き','home'],
+['unfurnished','家具なし','home'],
+['deposit','敷金','home'],
+['key money','礼金','home'],
+['agent fee','仲介手数料','home'],
+['property','不動産','home'],
+['real estate','不動産','home'],
+['mortgage fin','住宅ローン','home'],
+['equity','資産価値','home'],
+['renovation','リノベーション','home'],
+['extension','増築','home'],
+['demolish','取り壊す','home'],
+['build house','建てる','home'],
+['inspect','検査する','home'],
+['plumbing','配管','home'],
+['wiring','配線','home'],
+['insulation','断熱','home'],
+['foundation build','基礎','home'],
+['roof','屋根','home'],
+['facade','外観','home'],
+['interior','内装','home'],
+['exterior','外装','home'],
+['law legal','法律','social'],
+['regulation legal','規則','social'],
+['policy','政策','social'],
+['constitution','憲法','social'],
+['amendment','改正','social'],
+['statute','法令','social'],
+['contract legal','契約','business'],
+['clause','条項','business'],
+['terms','条件','business'],
+['condition','条件','business'],
+['obligation','義務','social'],
+['right legal','権利','social'],
+['duty','義務','social'],
+['liability legal','責任','business'],
+['immunity legal','免責','social'],
+['lawsuit','訴訟','social'],
+['sue','訴える','social'],
+['defend','弁護する','social'],
+['verdict','評決','social'],
+['sentence','判決','social'],
+['appeal','控訴','social'],
+['settlement','和解','social'],
+['compensation','補償','social'],
+['damages','損害賠償','social'],
+['plaintiff','原告','social'],
+['defendant','被告','social'],
+['witness legal','証人','social'],
+['evidence legal','証拠','social'],
+['attorney legal','弁護士','social'],
+['solicitor','事務弁護士','social'],
+['notary','公証人','social'],
+['power of attorney','委任状','social'],
+['affidavit','宣誓供述書','social'],
+['break a leg','頑張れ','phrase'],
+['under the weather','体調不良で','phrase'],
+['hit the road','出発する','phrase'],
+['make up one&#39;s mind','決心する','phrase'],
+['change of plans','予定変更','phrase'],
+['as soon as possible','できるだけ早く','phrase'],
+['long story short','要するに','phrase'],
+['keep in touch','連絡を保つ','phrase'],
+['get in touch','連絡する','phrase'],
+['on my way','向かっています','phrase'],
+['right away','すぐに','phrase'],
+['hold on','少し待ってください','phrase'],
+['hang on','少し待って','phrase'],
+['fair enough','なるほど','phrase'],
+['sounds good','いいですね','phrase'],
+['no worries','心配しないで','phrase'],
+['my pleasure','喜んで','phrase'],
+['not at all','全くない','phrase'],
+['what a pity','残念だ','phrase'],
+['what a shame','残念だね','phrase'],
+['never mind','気にしないで','phrase'],
+['it depends','場合による','phrase'],
+['as far as I know','私の知る限り','phrase'],
+['to be honest','正直に言うと','phrase'],
+['in my opinion','私の意見では','phrase'],
+['on the other hand','一方では','phrase'],
+['all in all','全体的に','phrase'],
+['at the end of the day','結局のところ','phrase'],
+['first of all','まず最初に','phrase'],
+['last but not least','最後ながら重要なことに','phrase'],
+['feel free to','遠慮なく〜してください','phrase'],
+['I appreciate it','ありがたいです','phrase'],
+['I owe you one','恩に着ます','phrase'],
+['let me know','教えてください','phrase'],
+['keep me posted','随時連絡して','phrase'],
+['talk later','また後で','phrase'],
+['touch base','連絡を取る','phrase'],
+['in the loop','情報共有されて','phrase'],
+['out of the loop','情報から外れて','phrase'],
+['heads up','予告・注意','phrase'],
+['FYI','参考までに','phrase'],
+['ASAP','できるだけ早く','phrase'],
+['prayer','祈り','social'],
+['worship','礼拝','social'],
+['blessing','祝福','social'],
+['sacred site','聖地','social'],
+['ritual','儀式','social'],
+['ceremony rit','式典','social'],
+['offering','供物','social'],
+['shrine','神社','travel'],
+['mosque rel','モスク','travel'],
+['cathedral rel','大聖堂','travel'],
+['chapel','礼拝堂','travel'],
+['monastery','修道院','travel'],
+['meditation rel','瞑想','social'],
+['fasting','断食','social'],
+['pilgrimage rel','巡礼','travel'],
+['Christmas','クリスマス','social'],
+['Easter','イースター','social'],
+['Eid','イード','social'],
+['Diwali','ディワリ','social'],
+['Hanukkah','ハヌカ','social'],
+['New Year','新年','social'],
+['New Year&#39;s Eve','大晦日','social'],
+['Valentine&#39;s Day','バレンタインデー','social'],
+['Halloween','ハロウィン','social'],
+['Thanksgiving','感謝祭','social'],
+['national day','建国記念日','social'],
+['independence day','独立記念日','social'],
+['orchestra','オーケストラ','arts'],
+['symphony','交響曲','arts'],
+['opera','オペラ','arts'],
+['jazz','ジャズ','arts'],
+['classical music','クラシック音楽','arts'],
+['pop music','ポップ','arts'],
+['rock music','ロック','arts'],
+['hip hop','ヒップホップ','arts'],
+['electronic music','電子音楽','arts'],
+['concert hall','コンサートホール','arts'],
+['stage','ステージ','arts'],
+['performer','パフォーマー','arts'],
+['audience arts','観客','arts'],
+['applause','拍手','arts'],
+['encore','アンコール','arts'],
+['album','アルバム','arts'],
+['single','シングル','arts'],
+['track','トラック','arts'],
+['playlist','プレイリスト','arts'],
+['studio','スタジオ','arts'],
+['producer','プロデューサー','arts'],
+['canvas','キャンバス','arts'],
+['brush','筆','arts'],
+['palette','パレット','arts'],
+['watercolor','水彩','arts'],
+['oil paint','油絵','arts'],
+['sketch','スケッチ','arts'],
+['portrait','肖像画','arts'],
+['landscape','風景画','arts'],
+['abstract art','抽象画','arts'],
+['sculpture arts','彫刻','arts'],
+['installation','インスタレーション','arts'],
+['performance art','パフォーマンスアート','arts'],
+['photography arts','写真','arts'],
+['darkroom','暗室','arts'],
+['exposure','露出','arts'],
+['composition','構図','arts'],
+['framing','フレーミング','arts'],
+['editing photo','編集','arts'],
+['sprint','短距離走','sports'],
+['marathon','マラソン','sports'],
+['relay','リレー','sports'],
+['hurdles','ハードル','sports'],
+['high jump','走り高跳び','sports'],
+['long jump','走り幅跳び','sports'],
+['discus','円盤投げ','sports'],
+['javelin','やり投げ','sports'],
+['weightlifting','重量挙げ','sports'],
+['wrestling','レスリング','sports'],
+['judo','柔道','sports'],
+['karate','空手','sports'],
+['taekwondo','テコンドー','sports'],
+['fencing','フェンシング','sports'],
+['archery','アーチェリー','sports'],
+['rowing','ボート漕ぎ','sports'],
+['sailing','セーリング','sports'],
+['surfing','サーフィン','sports'],
+['skiing','スキー','sports'],
+['snowboarding','スノーボード','sports'],
+['ice skating','アイススケート','sports'],
+['figure skating','フィギュアスケート','sports'],
+['hockey','ホッケー','sports'],
+['curling','カーリング','sports'],
+['diving','飛び込み','sports'],
+['gymnastics','体操','sports'],
+['cheerleading','チアリーディング','sports'],
+['esports','eスポーツ','sports'],
+['referee','審判','sports'],
+['umpire','審判（野球等）','sports'],
+['foul','ファウル','sports'],
+['penalty sports','ペナルティ','sports'],
+['overtime','延長','sports'],
+['substitution','交代','sports'],
+['injury sports','怪我','sports'],
+['transfer player','移籍','sports'],
+['pleased to meet you','お会いできて光栄です','phrase'],
+['how do you do','はじめまして','phrase'],
+['good to see you','会えてよかったです','phrase'],
+['long time no see','お久しぶりです','phrase'],
+['I&#39;ve missed you','会いたかったです','phrase'],
+['how have you been','元気でしたか','phrase'],
+['can&#39;t complain','まあまあです','phrase'],
+['not bad','悪くないです','phrase'],
+['so-so','まあまあ','phrase'],
+['same as always','いつも通り','phrase'],
+['better than ever','これまでで最高','phrase'],
+['couldn&#39;t be better','最高です','phrase'],
+['pardon me','すみません（聞き直し）','phrase'],
+['I beg your pardon','もう一度おっしゃいますか','phrase'],
+['what was that','何と言いましたか','phrase'],
+['could you write it down','書いてもらえますか','phrase'],
+['how do you spell that','どうスペルしますか','phrase'],
+['what does that mean','それはどういう意味ですか','phrase'],
+['I&#39;m afraid I don&#39;t know','残念ながらわかりません','phrase'],
+['let me check','確認させてください','phrase'],
+['one moment please','少々お待ちください','phrase'],
+['just a second','少し待って','phrase'],
+['I&#39;ll be right back','すぐ戻ります','phrase'],
+['after you','お先にどうぞ','phrase'],
+['go ahead','どうぞ','phrase'],
+['be my guest','どうぞご遠慮なく','phrase'],
+['help yourself','ご自由にどうぞ','phrase'],
+['make yourself at home','くつろいでください','phrase'],
+['have a good day','よい一日を','phrase'],
+['have a nice weekend','よい週末を','phrase'],
+['safe travels','よい旅を','phrase'],
+['take it easy','気楽にね','phrase'],
+['all the best','お元気で','phrase'],
+['good luck','頑張って','phrase'],
+['wish you well','うまくいくといいですね','phrase'],
+['fingers crossed','うまくいくといいね','phrase'],
+['heartburn','胸焼け','medical'],
+['indigestion','消化不良','medical'],
+['constipation','便秘','medical'],
+['migraine','偏頭痛','medical'],
+['arthritis','関節炎','medical'],
+['diabetes','糖尿病','medical'],
+['hypertension','高血圧','medical'],
+['asthma','喘息','medical'],
+['eczema','湿疹','medical'],
+['anemia','貧血','medical'],
+['vitamin deficiency','ビタミン不足','medical'],
+['sunburn','日焼け','medical'],
+['blisters','水ぶくれ','medical'],
+['bruise','打撲傷','medical'],
+['cut','切り傷','medical'],
+['burn','火傷','medical'],
+['food poisoning','食中毒','medical'],
+['dehydration','脱水','medical'],
+['heat stroke','熱中症','medical'],
+['hypothermia','低体温症','medical'],
+['altitude sickness','高山病','medical'],
+['jet lag','時差ぼけ','medical'],
+['motion sickness','乗り物酔い','medical'],
+['seasickness','船酔い','medical'],
+['first aid','応急処置','medical'],
+['CPR','心肺蘇生','medical'],
+['AED','AED','medical'],
+['stretcher','担架','medical'],
+['tourniquet','止血帯','medical'],
+['splint','添え木','medical'],
+['reduce','削減する','nature'],
+['reuse','再利用する','nature'],
+['recycle act','リサイクルする','nature'],
+['conserve','節約する','nature'],
+['preserve','保存する','nature'],
+['restore env','回復させる','nature'],
+['plant trees','植樹する','nature'],
+['clean up','清掃する','nature'],
+['campaign','キャンペーン','nature'],
+['awareness','意識','nature'],
+['petition','請願','nature'],
+['protest env','抗議','nature'],
+['carbon footprint','炭素排出量','nature'],
+['offset','相殺','nature'],
+['net zero','ネットゼロ','nature'],
+['renewable energy','再生可能エネルギー','nature'],
+['solar panel','太陽光パネル','nature'],
+['wind turbine','風力タービン','nature'],
+['electric vehicle','電気自動車','transport'],
+['hybrid car','ハイブリッド車','transport'],
+['public transport','公共交通機関','transport'],
+['bike lane','自転車レーン','transport'],
+['pedestrian zone','歩行者ゾーン','transport'],
+['green space','緑地','nature'],
+['fuel','燃料','transport'],
+['gasoline','ガソリン','transport'],
+['diesel','ディーゼル','transport'],
+['engine','エンジン','transport'],
+['battery car','バッテリー','transport'],
+['brake','ブレーキ','transport'],
+['accelerator','アクセル','transport'],
+['steering wheel','ハンドル','transport'],
+['gear','ギア','transport'],
+['trunk','トランク','transport'],
+['hood','ボンネット','transport'],
+['bumper','バンパー','transport'],
+['tire','タイヤ','transport'],
+['wheel','ホイール','transport'],
+['windshield','フロントガラス','transport'],
+['seat belt transport','シートベルト','transport'],
+['airbag','エアバッグ','transport'],
+['dashboard','ダッシュボード','transport'],
+['rearview mirror','バックミラー','transport'],
+['turn signal','ウインカー','transport'],
+['headlight','ヘッドライト','transport'],
+['horn','クラクション','transport'],
+['odometer','走行距離計','transport'],
+['speed limit','制限速度','transport'],
+['traffic jam','交通渋滞','transport'],
+['detour','迂回路','transport'],
+['one-way','一方通行','transport'],
+['U-turn','Uターン','transport'],
+['parking meter','パーキングメーター','transport'],
+['tow truck','レッカー車','transport'],
+['leadership','リーダーシップ','emotion'],
+['teamwork','チームワーク','emotion'],
+['communication skill','コミュニケーション力','emotion'],
+['problem-solving','問題解決力','emotion'],
+['critical thinking','批判的思考','emotion'],
+['decision-making','意思決定','emotion'],
+['time management','時間管理','emotion'],
+['adaptability','適応力','emotion'],
+['resilience','回復力','emotion'],
+['empathy skill','共感力','emotion'],
+['initiative','主体性','emotion'],
+['proactive','積極的な','emotion'],
+['reactive','受動的な','emotion'],
+['assertive','主張的な','emotion'],
+['diplomatic','外交的な','emotion'],
+['tactful','機転の利く','emotion'],
+['persuasive','説得力のある','emotion'],
+['charismatic','カリスマのある','emotion'],
+['inspirational','感動的な','emotion'],
+['motivational','動機付けになる','emotion'],
+['supportive','支持的な','emotion'],
+['collaborative','協力的な','emotion'],
+['competitive','競争的な','emotion'],
+['innovative adj','革新的な','emotion'],
+['analytical','分析的な','emotion'],
+['detail-oriented','細部志向の','emotion'],
+['big-picture','大局的な','emotion'],
+['organized','整理された','emotion'],
+['meticulous','細心の','emotion'],
+['efficient','効率的な','emotion'],
+['effective','効果的な','emotion'],
+['productive','生産的な','emotion'],
+['goal-oriented','目標志向の','emotion'],
+['results-driven','結果重視の','emotion'],
+['data-driven','データ重視の','emotion'],
+['customer-focused','顧客中心の','emotion'],
+['inbox','受信箱','tech'],
+['outbox','送信箱','tech'],
+['draft','下書き','tech'],
+['reply tech','返信','tech'],
+['forward','転送','tech'],
+['CC','CC','tech'],
+['BCC','BCC','tech'],
+['subject line','件名','tech'],
+['signature','署名','tech'],
+['template','テンプレート','tech'],
+['autoresponder','自動応答','tech'],
+['unsubscribe','配信停止','tech'],
+['newsletter','ニュースレター','tech'],
+['mailing list','メーリングリスト','tech'],
+['group chat','グループチャット','tech'],
+['direct message','ダイレクトメッセージ','tech'],
+['mention','メンション','tech'],
+['tag','タグ付け','tech'],
+['story','ストーリー','tech'],
+['reel','リール','tech'],
+['live stream','ライブ配信','tech'],
+['webinar','ウェビナー','tech'],
+['screen share','画面共有','tech'],
+['mute','ミュート','tech'],
+['unmute','ミュート解除','tech'],
+['join','参加する','tech'],
+['leave meeting','退出する','tech'],
+['breakout room','ブレイクアウトルーム','tech'],
+['chat function','チャット機能','tech'],
+['raise hand','挙手','tech'],
+['reaction emoji','リアクション','tech'],
+['poll','投票','tech'],
+['whiteboard digital','ホワイトボード','tech'],
+['where is the restroom','トイレはどこですか','phrase'],
+['is there a nearby ATM','近くにATMはありますか','phrase'],
+['how do I get to','〜へはどう行けばいいですか','phrase'],
+['is it far from here','ここから遠いですか','phrase'],
+['how long does it take','どのくらいかかりますか','phrase'],
+['which bus goes to','どのバスが〜に行きますか','phrase'],
+['can I walk there','歩いて行けますか','phrase'],
+['is it safe at night','夜は安全ですか','phrase'],
+['what is this place','ここは何ですか','phrase'],
+['can I take a photo here','ここで写真を撮っていいですか','phrase'],
+['is photography allowed','撮影は許可されていますか','phrase'],
+['what time does it open','何時に開きますか','phrase'],
+['what time does it close','何時に閉まりますか','phrase'],
+['is it open on weekends','週末は開いていますか','phrase'],
+['do I need a ticket','チケットが必要ですか','phrase'],
+['where can I buy a ticket','チケットはどこで買えますか','phrase'],
+['is there a guided tour','ガイドツアーはありますか','phrase'],
+['do you have English menus','英語メニューはありますか','phrase'],
+['is service charge included','サービス料は含まれていますか','phrase'],
+['can I pay by card','カードで払えますか','phrase'],
+['do you accept this currency','この通貨は使えますか','phrase'],
+['I&#39;d like to exchange money','両替したいのですが','phrase'],
+['what&#39;s the exchange rate','為替レートはいくらですか','phrase'],
+['where is the nearest hospital','最寄りの病院はどこですか','phrase'],
+['I need to see a doctor','医者に診てもらう必要があります','phrase'],
+['please call an ambulance','救急車を呼んでください','phrase'],
+['I&#39;ve been robbed','盗難に遭いました','phrase'],
+['I need to report a crime','事件を届け出たいです','phrase'],
+['where is the police station','警察署はどこですか','phrase'],
+['I need a translator','通訳が必要です','phrase'],
+['printer office','プリンター','business'],
+['photocopy','コピーする','business'],
+['scan doc','スキャンする','business'],
+['shredder','シュレッダー','business'],
+['whiteboard office','ホワイトボード','business'],
+['projector','プロジェクター','business'],
+['conference room','会議室','business'],
+['open office','オープンオフィス','business'],
+['cubicle','キュービクル','business'],
+['remote work','リモートワーク','business'],
+['work from home','在宅勤務','business'],
+['hybrid work','ハイブリッド勤務','business'],
+['flexible hours','フレキシブル勤務','business'],
+['overtime','残業','business'],
+['shift','シフト','business'],
+['leave','休暇','business'],
+['sick leave','病気休暇','business'],
+['maternity leave','産休','business'],
+['paternity leave','育休','business'],
+['annual leave','年次休暇','business'],
+['unpaid leave','無給休暇','business'],
+['probation','試用期間','business'],
+['permanent','正社員','business'],
+['contract worker','契約社員','business'],
+['part-time','パートタイム','business'],
+['full-time','フルタイム','business'],
+['outsource','外注する','business'],
+['delegate','委任する','business'],
+['assign','割り当てる','business'],
+['workload','仕事量','business'],
+['capacity work','キャパシティ','business'],
+['bandwidth','余裕・帯域','business'],
+['calibrate','調整する','business'],
+['innovation tech','イノベーション','tech'],
+['disruption tech','破壊的変化','tech'],
+['prototype','プロトタイプ','tech'],
+['beta version','ベータ版','tech'],
+['release','リリース','tech'],
+['patch','パッチ','tech'],
+['bug','バグ','tech'],
+['debugging','デバッグ','tech'],
+['code','コード','tech'],
+['programming','プログラミング','tech'],
+['developer','開発者','tech'],
+['database','データベース','tech'],
+['server','サーバー','tech'],
+['cloud computing','クラウドコンピューティング','tech'],
+['API','API','tech'],
+['interface','インターフェース','tech'],
+['UX','ユーザーエクスペリエンス','tech'],
+['UI','ユーザーインターフェース','tech'],
+['responsive','レスポンシブ','tech'],
+['mobile-first','モバイルファースト','tech'],
+['accessibility','アクセシビリティ','tech'],
+['big data','ビッグデータ','tech'],
+['analytics','アナリティクス','tech'],
+['dashboard tech','ダッシュボード','tech'],
+['visualization','可視化','tech'],
+['report tech','レポート','tech'],
+['insight','インサイト','tech'],
+['Internet of Things','モノのインターネット','tech'],
+['smart device','スマートデバイス','tech'],
+['wearable','ウェアラブル','tech'],
+['augmented reality','拡張現実','tech'],
+['virtual reality','仮想現実','tech'],
+['metaverse','メタバース','tech'],
+['sunrise time','日の出','time'],
+['sunset time','日の入り','time'],
+['dawn','夜明け','time'],
+['dusk','夕暮れ','time'],
+['noon time','正午','time'],
+['midnight time','真夜中','time'],
+['rush hour time','ラッシュアワー','time'],
+['peak time','ピーク時','time'],
+['off-peak','オフピーク','time'],
+['opening time','開店時間','time'],
+['closing time','閉店時間','time'],
+['business hours','営業時間','time'],
+['reply email','メールに返信','phrase'],
+['reach out','連絡を取る','phrase'],
+['circle back','折り返し連絡する','phrase'],
+['sync up','確認し合う','phrase'],
+['loop in','巻き込む','phrase'],
+['sign off','承認する','phrase'],
+['sign up','登録する','phrase'],
+['sign in','サインインする','phrase'],
+['log in','ログインする','phrase'],
+['log out','ログアウトする','phrase'],
+['sign out','サインアウトする','phrase'],
+['pin','固定する','tech'],
+['unpin','固定を外す','tech'],
+['archive','アーカイブする','tech'],
+['unarchive','アーカイブを戻す','tech'],
+['bookmark','ブックマーク','tech'],
+['favorite','お気に入り','tech'],
+['star','スターをつける','tech'],
+['zoom in','ズームイン','tech'],
+['zoom out','ズームアウト','tech'],
+['scroll','スクロール','tech'],
+['swipe','スワイプ','tech'],
+['tap','タップ','tech'],
+['pinch','ピンチ','tech'],
+['drag','ドラッグ','tech'],
+['drop','ドロップ','tech'],
+['copy','コピー','tech'],
+['paste','ペースト','tech'],
+['cut action','カット','tech'],
+['undo','元に戻す','tech'],
+['redo','やり直す','tech'],
+['refresh','更新する','tech'],
+['reload','再読み込み','tech'],
+['screenshot','スクリーンショット','tech'],
+['screen recording','画面録画','tech'],
+['compress','圧縮する','tech'],
+['extract','展開する','tech'],
+['rename','名前を変える','tech'],
+['move file','移動する','tech'],
+['copy file','コピーする','tech'],
+['share file','共有する','tech'],
+['permission','権限','tech'],
+['admin','管理者','tech'],
+['user','ユーザー','tech'],
+['guest user','ゲスト','tech'],
+['subscribe','購読する','tech'],
+['unsubscribe tech','購読解除','tech'],
+['notification tech','通知','tech'],
+['alert','アラート','tech'],
+['reminder','リマインダー','tech'],
+['alarm','アラーム','tech'],
+['calendar','カレンダー','tech'],
+['event','イベント','tech'],
+['task tech','タスク','tech'],
+['project tech','プロジェクト','tech'],
+['deadline tech','締め切り','tech'],
+['milestone','マイルストーン','tech'],
+['progress','進捗','tech'],
+['status','ステータス','tech'],
+['complete tech','完了','tech'],
+['pending','保留中','tech'],
+['in progress','進行中','tech'],
+['overdue tech','期限超過','tech'],
+['assigned','割り当て済み','tech'],
+['unassigned','未割り当て','tech'],
+['priority tech','優先度','tech'],
+['high priority','高優先度','tech'],
+['low priority','低優先度','tech'],
+['urgent tech','緊急','tech'],
+['flag','フラグ','tech'],
+['label','ラベル','tech'],
+['tag tech','タグ','tech'],
+['category','カテゴリ','tech'],
+['sort','並び替え','tech'],
+['filter','フィルター','tech'],
+['search tech','検索','tech'],
+['find','見つける','tech'],
+['replace','置き換える','tech'],
+['highlight','ハイライト','tech'],
+['bold','太字','tech'],
+['italic','斜体','tech'],
+['underline','下線','tech'],
+['strikethrough','取り消し線','tech'],
+['indent','インデント','tech'],
+['align','揃える','tech'],
+['format','フォーマット','tech'],
+['font','フォント','tech'],
+['size text','サイズ','tech'],
+['color text','色','tech'],
+['paragraph','段落','tech'],
+['sentence','文','tech'],
+['word','単語','tech'],
+['character','文字','tech'],
+['page','ページ','tech'],
+['slide','スライド','tech'],
+['chapter','章','tech'],
+['section','セクション','tech'],
+['heading','見出し','tech'],
+['subheading','小見出し','tech'],
+['bullet point','箇条書き','tech'],
+['numbered list','番号付きリスト','tech'],
+['table','表','tech'],
+['row','行','tech'],
+['column','列','tech'],
+['cell','セル','tech'],
+['chart','グラフ','tech'],
+['graph','グラフ','tech'],
+['pie chart','円グラフ','tech'],
+['bar chart','棒グラフ','tech'],
+['line graph','折れ線グラフ','tech'],
+['scatter plot','散布図','tech'],
+['diagram','図','tech'],
+['flowchart','フローチャート','tech']
+];
+const CAT_LABELS = {
+  travel: "✈️ 旅行・交通",
+  airport: "🛫 空港・フライト",
+  hotel: "🏨 ホテル・宿泊",
+  restaurant: "🍽️ 食事・レストラン",
+  food: "🥗 食材・料理",
+  food2: "🍳 調理・キッチン",
+  shopping: "🛍️ ショッピング",
+  daily: "🏠 日常生活",
+  home: "🪑 家・家具",
+  body: "🫀 身体・健康",
+  medical: "🏥 病院・医療",
+  emergency: "🚨 緊急・トラブル",
+  business: "💼 仕事・ビジネス",
+  tech: "💻 テクノロジー",
+  nature: "🌿 自然・環境",
+  weather: "🌤️ 天気・気候",
+  animals: "🐾 動物",
+  emotion: "😊 感情・性格",
+  education: "📚 教育・学校",
+  sports: "⚽ スポーツ",
+  arts: "🎨 娯楽・趣味・芸術",
+  clothing: "👗 衣類・ファッション",
+  transport: "🚗 乗り物・移動",
+  places: "🏙️ 建物・場所",
+  adjective: "📝 形容詞",
+  verb: "⚡ 動詞",
+  adverb: "🔗 副詞・接続詞",
+  social: "🌍 社会・文化・人間関係",
+  time: "⏰ 時間・数・単位",
+  phrase: "💬 会話・フレーズ"
+};
+
+/* ===================================================
+   STATE & STORAGE
+   =================================================== */
+var S = {
+  xp: 0, level: 1, streak: 0, lastDate: "",
+  studied: {}, wrong: {}, quizDone: 0, totalCorrect: 0, totalQ: 0,
+  activity: []
+};
+
+var LEVEL_NAMES = ["Beginner","Elementary","Pre-Intermediate","Intermediate","Upper-Intermediate","Advanced","Proficient","Expert","Master","Legend"];
+var LEVEL_XP = [0,100,250,450,700,1000,1400,1900,2500,3200,4000];
+
+function saveS() {
+  try { localStorage.setItem("em_state", JSON.stringify(S)); } catch(e){}
+}
+function loadS() {
+  try {
+    var d = localStorage.getItem("em_state");
+    if (d) { var p = JSON.parse(d); for(var k in p) S[k]=p[k]; }
+  } catch(e){}
+  checkStreak();
+}
+function checkStreak() {
+  var today = new Date().toDateString();
+  if (S.lastDate === today) return;
+  var yesterday = new Date(Date.now()-86400000).toDateString();
+  if (S.lastDate === yesterday) { S.streak++; }
+  else if (S.lastDate !== "") { S.streak = 1; }
+  else { S.streak = 1; }
+  S.lastDate = today;
+  saveS();
+}
+
+function addXP(n, reason) {
+  S.xp += n;
+  var prevLevel = S.level;
+  while (S.level < LEVEL_XP.length-1 && S.xp >= LEVEL_XP[S.level+1]) S.level++;
+  saveS();
+  updateTopBar();
+  showNotif("+" + n + " XP — " + reason);
+  if (S.level > prevLevel) {
+    setTimeout(function(){ showNotif("🎉 Level Up! Lv." + S.level + " " + (LEVEL_NAMES[S.level-1]||"")); }, 500);
+  }
+}
+
+function markWrong(word) {
+  S.wrong[word] = (S.wrong[word]||0) + 1;
+  S.totalQ++;
+  saveS();
+}
+function markCorrect(word) {
+  S.totalCorrect++;
+  S.totalQ++;
+  if (S.wrong[word] > 0) { S.wrong[word] = Math.max(0, S.wrong[word]-1); if(S.wrong[word]===0) delete S.wrong[word]; }
+  saveS();
+}
+function markStudied(word) {
+  S.studied[word] = true;
+  saveS();
+}
+
+function updateTopBar() {
+  document.getElementById("streakNum").textContent = S.streak;
+  document.getElementById("xpNum").textContent = S.xp;
+  document.getElementById("levelNum").textContent = S.level;
+}
+
+function updateDash() {
+  var studied = Object.keys(S.studied).length;
+  var weakCount = Object.keys(S.wrong).length;
+  var acc = S.totalQ > 0 ? Math.round(S.totalCorrect/S.totalQ*100)+"%" : "—";
+  document.getElementById("dTotalStudied").textContent = studied;
+  document.getElementById("dAccuracy").textContent = acc;
+  document.getElementById("dStreak").textContent = S.streak;
+  document.getElementById("dQuizDone").textContent = S.quizDone;
+  document.getElementById("dWeakCount").textContent = weakCount;
+  document.getElementById("lvlTitle").textContent = S.level;
+  document.getElementById("lvlName").textContent = LEVEL_NAMES[S.level-1]||"Legend";
+  var curXP = S.xp - (LEVEL_XP[S.level-1]||0);
+  var nextXP = (LEVEL_XP[S.level]||LEVEL_XP[LEVEL_XP.length-1]) - (LEVEL_XP[S.level-1]||0);
+  document.getElementById("lvlCurXP").textContent = curXP;
+  document.getElementById("lvlNextXP").textContent = nextXP;
+  document.getElementById("lvlBar").style.width = Math.min(100,Math.round(curXP/nextXP*100))+"%";
+
+  var wkeys = Object.keys(S.wrong);
+  var ws = document.getElementById("weakSection");
+  var wc = document.getElementById("weakChips");
+  if (wkeys.length > 0) {
+    ws.style.display="block";
+    wc.innerHTML = wkeys.slice(0,20).map(function(w){
+      return "<span class=\"weak-chip\" onclick=\"speakWord('"+w+"')\">"+w+" ("+S.wrong[w]+")</span>";
+    }).join("");
+  } else { ws.style.display="none"; }
+
+  var al = document.getElementById("activityLog");
+  if (S.activity && S.activity.length > 0) {
+    al.innerHTML = S.activity.slice(-8).reverse().map(function(a){
+      var icons = {quiz:"🎯",flash:"🃏",vocab:"📖"};
+      var colors = {quiz:"rgba(255,215,0,.15)",flash:"rgba(88,166,255,.15)",vocab:"rgba(63,185,80,.15)"};
+      return "<div class=\"activity-row\">"
+        +"<div class=\"act-icon\" style=\"background:"+( colors[a.type]||"var(--surface2)")+"\">"+(icons[a.type]||"📝")+"</div>"
+        +"<div class=\"act-text\"><strong>"+a.label+"</strong><span>"+a.date+"</span></div>"
+        +"<div class=\"act-score\" style=\"color:var(--gold)\">+"+a.xp+" XP</div></div>";
+    }).join("");
+  }
+}
+
+function logActivity(type, label, xp) {
+  if (!S.activity) S.activity=[];
+  var now = new Date();
+  var d = (now.getMonth()+1)+"/"+now.getDate()+" "+now.getHours()+":"+String(now.getMinutes()).padStart(2,"0");
+  S.activity.push({type:type,label:label,xp:xp,date:d});
+  if (S.activity.length > 30) S.activity = S.activity.slice(-30);
+  saveS();
+}
+
+/* ===================================================
+   SPEECH
+   =================================================== */
+function speakWord(text) {
+  if (!window.speechSynthesis) return;
+  window.speechSynthesis.cancel();
+  var u = new SpeechSynthesisUtterance(text.replace(/&#39;/g,"'"));
+  u.lang = "en-US"; u.rate = 0.9;
+  window.speechSynthesis.speak(u);
+}
+
+/* ===================================================
+   NOTIFICATIONS
+   =================================================== */
+function showNotif(msg) {
+  var area = document.getElementById("notifArea");
+  var el = document.createElement("div");
+  el.className = "notif-item"; el.textContent = msg;
+  area.appendChild(el);
+  setTimeout(function(){ if(el.parentNode) el.parentNode.removeChild(el); }, 3100);
+}
+
+/* ===================================================
+   TABS
+   =================================================== */
+function showTab(id) {
+  var secs=document.querySelectorAll(".section"), btns=document.querySelectorAll(".tab-btn");
+  for(var i=0;i<secs.length;i++) secs[i].classList.remove("active");
+  for(var i=0;i<btns.length;i++) btns[i].classList.remove("active");
+  document.getElementById(id).classList.add("active");
+  document.getElementById("tab-"+id).classList.add("active");
+  if(id==="dash") updateDash();
+}
+
+/* ===================================================
+   VOCAB
+   =================================================== */
+var catOrder=["travel","airport","hotel","restaurant","food","food2","shopping","daily","home","body","medical","emergency","business","tech","nature","weather","animals","emotion","education","sports","arts","clothing","transport","places","adjective","verb","adverb","social","time","phrase"];
+var vCat="all",vSearch="",vView="grid",vPage=1,PER=60;
+
+function getFiltered() {
+  var d=VOCAB_DATA;
+  if(vCat!=="all") d=d.filter(function(v){return v[2]===vCat;});
+  if(vSearch){var q=vSearch.toLowerCase();d=d.filter(function(v){return v[0].toLowerCase().indexOf(q)>=0||v[1].indexOf(q)>=0;});}
+  return d;
+}
+function renderCatPills() {
+  var el=document.getElementById("catPills"),counts={};
+  VOCAB_DATA.forEach(function(v){counts[v[2]]=(counts[v[2]]||0)+1;});
+  var h="<button class=\"cat-pill active\" onclick=\"setCat('all',this)\">すべて ("+VOCAB_DATA.length+")</button>";
+  catOrder.forEach(function(k){if(counts[k])h+="<button class=\"cat-pill\" onclick=\"setCat('"+k+"',this)\">"+CAT_LABELS[k]+" ("+counts[k]+")</button>";});
+  el.innerHTML=h;
+}
+function setCat(cat,btn){
+  vCat=cat;vPage=1;
+  document.querySelectorAll("#catPills .cat-pill").forEach(function(b){b.classList.remove("active");});
+  btn.classList.add("active");renderVocab();
+}
+function searchVocab(){vSearch=document.getElementById("searchInput").value;vPage=1;renderVocab();}
+function setView(v){
+  vView=v;
+  document.getElementById("gridViewBtn").classList.toggle("active",v==="grid");
+  document.getElementById("listViewBtn").classList.toggle("active",v==="list");
+  renderVocab();
+}
+function renderVocab() {
+  var d=getFiltered(),total=d.length,pages=Math.ceil(total/PER),start=(vPage-1)*PER,pg=d.slice(start,start+PER);
+  document.getElementById("wordCount").textContent=total+" 語";
+  var grid=document.getElementById("vocabGrid"),lw=document.getElementById("vocabListWrap");
+  if(vView==="grid"){
+    grid.classList.remove("hide");lw.classList.remove("show");
+    grid.innerHTML=pg.map(function(v){
+      var learned=S.studied[v[0]]?"✅ ":"";
+      var weak=S.wrong[v[0]]?"🔴 ":"";
+      return "<div class=\"vocab-card\" onclick=\"flipCard(this,'"+v[0].replace(/'/g,"&#39;")+"')\">"
+        +"<div class=\"front\">"
+        +"<div class=\"learned-badge\">"+weak+learned+"</div>"
+        +"<div class=\"vword\">"+v[0]+"</div>"
+        +"<div class=\"vpos\">"+(CAT_LABELS[v[2]]||v[2])+"</div>"
+        +"<button class=\"speak-btn\" onclick=\"event.stopPropagation();speakWord('"+v[0].replace(/'/g,"&#39;")+"')\">🔊</button></div>"
+        +"<div class=\"back\"><div class=\"vmeaning\">"+v[1]+"</div><div class=\"vcat\">"+(CAT_LABELS[v[2]]||v[2])+"</div></div>"
+        +"<div class=\"flip-hint\">tap</div></div>";
+    }).join("");
+  } else {
+    grid.classList.add("hide");lw.classList.add("show");
+    lw.innerHTML=pg.map(function(v){
+      return "<div class=\"vlist-item\">"
+        +"<div class=\"vl-word\">"+(S.wrong[v[0]]?"🔴 ":"")+(S.studied[v[0]]?"✅ ":"")+v[0]+"</div>"
+        +"<div class=\"vl-meaning\">"+v[1]+"</div>"
+        +"<div class=\"vl-cat\">"+(CAT_LABELS[v[2]]||v[2])+"</div>"
+        +"<button class=\"vl-speak\" onclick=\"speakWord('"+v[0].replace(/'/g,"&#39;")+"')\">🔊</button></div>";
+    }).join("");
+  }
+  var pag=document.getElementById("pagination");
+  if(pages<=1){pag.innerHTML="";return;}
+  var h="<button class=\"page-btn\" onclick=\"goPage("+(vPage-1)+")\" "+(vPage===1?"disabled":"")+">←</button>";
+  var range=[];
+  for(var i=1;i<=pages;i++){if(i===1||i===pages||Math.abs(i-vPage)<=2)range.push(i);else if(range[range.length-1]!=="...")range.push("...");}
+  range.forEach(function(p){
+    if(p==="...")h+="<span class=\"page-info\">…</span>";
+    else h+="<button class=\"page-btn"+(p===vPage?" active":"")+"\" onclick=\"goPage("+p+")\">"+p+"</button>";
+  });
+  h+="<button class=\"page-btn\" onclick=\"goPage("+(vPage+1)+")\" "+(vPage===pages?"disabled":"")+">→</button>";
+  h+="<span class=\"page-info\">"+(start+1)+"–"+Math.min(start+PER,total)+" / "+total+"</span>";
+  pag.innerHTML=h;
+}
+function flipCard(card,word) {
+  card.classList.toggle("flipped");
+  if(card.classList.contains("flipped")){markStudied(word);addXP(1,"単語を確認");}
+  speakWord(word);
+}
+function goPage(p){var pages=Math.ceil(getFiltered().length/PER);if(p<1||p>pages)return;vPage=p;renderVocab();document.getElementById("vocab").scrollIntoView({behavior:"smooth"});}
+
+/* ===================================================
+   FLASHCARD
+   =================================================== */
+var fcDeck=[],fcIdx=0,fcRevealed=false,fcCat="all",fcResults={good:0,ok:0,bad:0};
+
+function renderFCCatPills() {
+  var el=document.getElementById("fcCatPills"),counts={};
+  VOCAB_DATA.forEach(function(v){counts[v[2]]=(counts[v[2]]||0)+1;});
+  var h="<button class=\"cat-pill active\" id=\"fcp-all\" onclick=\"fcSetCat('all',this)\">すべて</button>";
+  catOrder.forEach(function(k){if(counts[k])h+="<button class=\"cat-pill\" id=\"fcp-"+k+"\" onclick=\"fcSetCat('"+k+"',this)\">"+CAT_LABELS[k]+"</button>";});
+  el.innerHTML=h;
+}
+function fcSetCat(cat,btn){
+  fcCat=cat;
+  document.querySelectorAll("#fcCatPills .cat-pill").forEach(function(b){b.classList.remove("active");});
+  btn.classList.add("active");
+}
+function startFC(mode) {
+  var pool;
+  if(mode==="weak"){
+    pool=VOCAB_DATA.filter(function(v){return S.wrong[v[0]]>0;});
+    if(pool.length===0){showNotif("要復習単語はありません！");return;}
+  } else {
+    pool=fcCat==="all"?VOCAB_DATA:VOCAB_DATA.filter(function(v){return v[2]===fcCat;});
+    pool=pool.sort(function(){return Math.random()-.5;}).slice(0,30);
+  }
+  fcDeck=pool.slice();fcIdx=0;fcRevealed=false;fcResults={good:0,ok:0,bad:0};
+  renderFC();
+}
+function renderFC() {
+  var area=document.getElementById("fcArea");
+  if(fcIdx>=fcDeck.length){
+    var total=fcResults.good+fcResults.ok+fcResults.bad;
+    var xpEarned=fcResults.good*3+fcResults.ok*1;
+    addXP(xpEarned,"フラッシュカード完了");
+    logActivity("flash","フラッシュカード "+total+"枚",xpEarned);
+    S.quizDone++;saveS();
+    area.innerHTML="<div style=\"text-align:center;padding:32px\">"
+      +"<div style=\"font-size:56px;margin-bottom:12px\">🎉</div>"
+      +"<div style=\"font-size:22px;font-weight:900;margin-bottom:8px\">完了！</div>"
+      +"<div style=\"color:var(--muted);font-size:14px;margin-bottom:20px\">"+total+"枚中 知ってた: <b style=\"color:var(--green)\">"+fcResults.good+"</b>  あいまい: <b style=\"color:var(--gold)\">"+fcResults.ok+"</b>  知らない: <b style=\"color:var(--red)\">"+fcResults.bad+"</b></div>"
+      +"<div style=\"color:var(--gold);font-size:18px;font-weight:800;margin-bottom:20px\">+"+xpEarned+" XP 獲得！</div>"
+      +"<div style=\"display:flex;gap:10px;justify-content:center;flex-wrap:wrap\">"
+      +"<button class=\"fc-start-btn\" onclick=\"startFC('all')\">もう一度</button>"
+      +"<button class=\"fc-start-btn\" style=\"background:var(--red)\" onclick=\"startFC('weak')\">要復習のみ</button>"
+      +"<button class=\"fc-start-btn\" style=\"background:var(--surface2);color:var(--text)\" onclick=\"resetFC()\">カテゴリ選択に戻る</button>"
+      +"</div></div>";
+    updateDash();return;
+  }
+  var v=fcDeck[fcIdx];fcRevealed=false;
+  var pct=Math.round(fcIdx/fcDeck.length*100);
+  area.innerHTML="<div class=\"fc-header\">"
+    +"<div class=\"fc-title\">フラッシュカード</div>"
+    +"<div class=\"fc-progress-wrap\"><div class=\"fc-bar-bg\"><div class=\"fc-bar-fill\" style=\"width:"+pct+"%\"></div></div></div>"
+    +"<div class=\"fc-count\">"+fcIdx+" / "+fcDeck.length+"</div></div>"
+    +"<div class=\"fc-card\" id=\"fcCard\" onclick=\"revealFC()\">"
+    +"<div style=\"font-family:'DM Mono',monospace;font-size:11px;color:var(--gold);letter-spacing:2px;margin-bottom:12px;text-transform:uppercase\">"+(CAT_LABELS[v[2]]||v[2])+"</div>"
+    +"<div class=\"fc-word\">"+v[0]+"</div>"
+    +"<div class=\"fc-hint\" id=\"fcHint\">クリックして意味を確認</div>"
+    +"</div>"
+    +"<div class=\"fc-btns\" id=\"fcBtns\" style=\"display:none\">"
+    +"<button class=\"fc-btn bad\" onclick=\"fcRate('bad')\">😢 知らない</button>"
+    +"<button class=\"fc-btn ok\" onclick=\"fcRate('ok')\">🤔 あいまい</button>"
+    +"<button class=\"fc-btn good\" onclick=\"fcRate('good')\">✅ 知ってた！</button>"
+    +"</div>";
+}
+function revealFC(){
+  if(fcRevealed)return;fcRevealed=true;
+  var v=fcDeck[fcIdx];
+  var card=document.getElementById("fcCard");
+  card.classList.add("revealed");
+  document.getElementById("fcHint").innerHTML="<div class=\"fc-answer\">"+v[1]+"</div>"
+    +"<div class=\"fc-cat-label\">"+(CAT_LABELS[v[2]]||v[2])+"</div>"
+    +"<button class=\"fc-speak\" onclick=\"speakWord('"+v[0].replace(/'/g,"&#39;")+"')\">🔊 発音を聞く</button>";
+  document.getElementById("fcBtns").style.display="flex";
+  speakWord(v[0]);
+  markStudied(v[0]);
+}
+function fcRate(r){
+  var v=fcDeck[fcIdx];
+  if(r==="bad"){markWrong(v[0]);fcResults.bad++;fcDeck.push(v);}
+  else if(r==="ok"){fcResults.ok++;markStudied(v[0]);}
+  else{fcResults.good++;markCorrect(v[0]);}
+  fcIdx++;renderFC();
+}
+function resetFC(){
+  document.getElementById("fcArea").innerHTML="<div style=\"text-align:center;padding:20px\">"
+    +"<div style=\"font-size:48px;margin-bottom:16px\">🃏</div>"
+    +"<div style=\"font-size:18px;font-weight:800;margin-bottom:8px\">フラッシュカード学習</div>"
+    +"<div style=\"color:var(--muted);font-size:14px;margin-bottom:20px\">カテゴリを選んでスタート！</div>"
+    +"<div class=\"cat-scroll\" style=\"margin-bottom:16px\"><div class=\"cat-pills\" id=\"fcCatPills\"></div></div>"
+    +"<div style=\"display:flex;gap:10px;justify-content:center;flex-wrap:wrap\">"
+    +"<button class=\"fc-start-btn\" onclick=\"startFC('all')\">🌍 全単語でスタート</button>"
+    +"<button class=\"fc-start-btn\" style=\"background:var(--red)\" onclick=\"startFC('weak')\">⚠️ 要復習のみ</button>"
+    +"</div></div>";
+  renderFCCatPills();
+}
+
+/* ===================================================
+   GRAMMAR
+   =================================================== */
+var grammarData=[
+  {num:"01",title:"5文型の基本 — 英語の骨格",level:"basic",ll:"基礎",
+   rule:"S + V（主語＋動詞）が英語の最小単位\nS+V / S+V+O / S+V+C / S+V+O+O / S+V+O+C",
+   desc:"英語はすべての文が「主語（S）＋動詞（V）」から始まります。この骨格を覚えることで、どんな文も作れるようになります。",
+   ex:[["I am a student.","私は学生です。（S+V+C）","be動詞は「=(イコール)」のイメージ"],
+       ["She speaks English.","彼女は英語を話す。（S+V+O）",""],
+       ["He gave me a gift.","彼は私にプレゼントをくれた。（S+V+O+O）","「誰に＋何を」の順番"]]},
+  {num:"02",title:"時制の使い分け — 現在・過去・未来",level:"basic",ll:"基礎",
+   rule:"現在形: I work. / 過去形: I worked. / 未来: I will work.\n現在進行形: I am working.",
+   desc:"海外でもっとも使う時制は「現在形・過去形・will未来」の3つ。現在進行形も「今まさに〜している」で頻出です。",
+   ex:[["I need a taxi.","（今）タクシーが必要です。","現在形：習慣・事実・今の状態"],
+       ["I lost my passport.","パスポートをなくしました。","過去形：完了した出来事"],
+       ["I will be back in 10 minutes.","10分後に戻ります。","will：その場での意思・予測"]]},
+  {num:"03",title:"助動詞 — 丁寧さと意図を伝える",level:"mid",ll:"中級",
+   rule:"can（できる）/ would（〜していただけますか）\ncould（丁寧な依頼）/ should（すべき）/ may（〜してもいい）",
+   desc:"助動詞を使うだけで、文の丁寧さが大きく変わります。特に「Could you...?」は旅行中の依頼に万能です。",
+   ex:[["Could you help me?","助けていただけますか？","Canより丁寧。外国人への依頼はこれ！"],
+       ["Would you like some water?","お水はいかがですか？","Would like = want の丁寧形"],
+       ["You should try this dish.","この料理を試してみるべきです。","shouldは強い推薦にも使える"]]},
+  {num:"04",title:"前置詞 — 場所・時間・方向を表す",level:"mid",ll:"中級",
+   rule:"at（点）/ in（空間・期間）/ on（接触・曜日）\nto（方向）/ for（目的・期間）/ with（〜と一緒に）",
+   desc:"前置詞は日本語に対応する訳語がないため感覚で覚えるのが効果的。",
+   ex:[["I'll arrive at 3 pm.","午後3時に到着します。","at + 時刻（点のイメージ）"],
+       ["The hotel is in Tokyo.","ホテルは東京にあります。","in + 広い場所（空間のイメージ）"],
+       ["I'm looking for a bus to the airport.","空港行きのバスを探しています。","to = 方向・目的地"]]},
+  {num:"05",title:"疑問文の作り方 — 情報を引き出す",level:"basic",ll:"基礎",
+   rule:"Yes/No疑問: Do/Does/Did/Is/Are + S + V?\nWH疑問: What/Where/When/Who/How + 助動詞 + S + V?",
+   desc:"海外では自分から情報を取りにいく積極性が必要。疑問文を使いこなせると困らない状況が格段に増えます。",
+   ex:[["Where is the nearest subway station?","一番近い地下鉄の駅はどこですか？","Where + is が鉄板パターン"],
+       ["How much does this cost?","これはいくらですか？","How much = 値段を聞く定番表現"],
+       ["What time does the train leave?","電車は何時に出発しますか？","What time + does + S + V の形"]]},
+  {num:"06",title:"不定詞・動名詞",level:"mid",ll:"中級",
+   rule:"不定詞: to + 動詞の原形（〜すること・〜するために）\n動名詞: 動詞 + ing（〜すること）",
+   desc:"「〜したい」「〜するために」など複雑な意図を伝えるのに必須。",
+   ex:[["I want to go to the museum.","博物館に行きたいです。","want to + 動詞原形 は頻出！"],
+       ["I'm here to attend a conference.","会議に参加するために来ました。","to不定詞で目的を表現"],
+       ["I enjoy traveling abroad.","海外旅行が好きです。","enjoy + 動名詞(-ing)"]]},
+  {num:"07",title:"受動態 — 「〜される」を表す",level:"mid",ll:"中級",
+   rule:"be動詞 + 過去分詞 (+ by 〜)",
+   desc:"被害・状況説明など、日常の英語に頻出。緊急時にも使えます。",
+   ex:[["My wallet was stolen.","財布が盗まれました。","緊急時の重要表現"],
+       ["The museum is closed on Mondays.","博物館は月曜日は閉まっています。","場所・施設の説明によく使われる"],
+       ["Is service included?","サービス料は含まれていますか？","is included = 含まれている"]]},
+  {num:"08",title:"現在完了形 — 経験と完了",level:"adv",ll:"上級",
+   rule:"have/has + 過去分詞\n経験: I have been to... / 完了: I have finished... / 継続: I have lived here for...",
+   desc:"「〜したことがある（経験）」「〜してしまった（完了）」を表すのに不可欠です。",
+   ex:[["I have never tried Thai food.","タイ料理を食べたことがありません。","have never + 過去分詞 = 一度もない"],
+       ["Have you been to Paris?","パリに行ったことはありますか？","Have you been to ~ ?"],
+       ["I have already checked in.","もうチェックインしました。","already = もう"]]}
+];
+function renderGrammar(){
+  var el=document.getElementById("grammarList");
+  el.innerHTML=grammarData.map(function(g,i){
+    return "<div class=\"grammar-card\" id=\"gc"+i+"\">"
+      +"<div class=\"grammar-header\" onclick=\"toggleG("+i+")\">"
+      +"<div class=\"grammar-header-left\">"
+      +"<span class=\"grammar-num\">"+g.num+"</span>"
+      +"<span class=\"grammar-title\">"+g.title+"</span>"
+      +"<span class=\"grammar-level level-"+g.level+"\">"+g.ll+"</span>"
+      +"</div><span class=\"grammar-arrow\">▾</span></div>"
+      +"<div class=\"grammar-body\"><div class=\"grammar-rule\">"+g.rule+"</div><p>"+g.desc+"</p>"
+      +"<div class=\"examples-block\">"
+      +g.ex.map(function(e){
+        return "<div class=\"ex-item\">"
+          +"<div class=\"ex-en\">"+e[0]+"<button class=\"ex-speak\" onclick=\"speakWord('"+e[0].replace(/'/g,"&#39;").replace(/"/g,"&quot;")+"')\">🔊</button></div>"
+          +"<div class=\"ex-jp\">"+e[1]+"</div>"
+          +(e[2]?"<div class=\"ex-note\">💡 "+e[2]+"</div>":"")
+          +"</div>";
+      }).join("")
+      +"</div></div></div>";
+  }).join("");
+}
+function toggleG(i){document.getElementById("gc"+i).classList.toggle("open");}
+
+/* ===================================================
+   PHRASES
+   =================================================== */
+var scenes=[
+  {key:"airport",label:"✈️ 空港・入国",items:[
+    ["I'm here for sightseeing.","観光で来ました。","入国審査の定番。business や visiting family に変えて使えます。"],
+    ["I'll be staying for 7 nights.","7泊滞在する予定です。","滞在日数は for + 日数 で答えましょう。"],
+    ["I have nothing to declare.","申告するものは何もありません。","税関での必須フレーズ。"],
+    ["Where can I get a taxi?","タクシーはどこで乗れますか？","Where can I get a ~? は万能表現。"],
+    ["Which gate is my flight departing from?","私のフライトはどのゲートから出ますか？","チケットを見せながら言うと伝わりやすい。"],
+    ["Is there a currency exchange nearby?","近くに両替所はありますか？","空港での両替は手数料が高めです。"]
+  ]},
+  {key:"hotel",label:"🏨 ホテル",items:[
+    ["I have a reservation under Tanaka.","Tanakaで予約しています。","under + 名前 は予約名を伝える定番表現。"],
+    ["Could I have a room with a view?","眺めの良い部屋はありますか？","non-smoking room や quiet room も一緒に覚えよう。"],
+    ["Is breakfast included?","朝食は含まれていますか？","Is Wi-Fi included? など様々な質問に応用できます。"],
+    ["The air conditioning isn't working.","エアコンが壊れています。","~ isn't working. が最もシンプルな不具合報告。"],
+    ["Could I get extra towels, please?","タオルを追加でいただけますか？","extra = 追加の。"],
+    ["What time is checkout?","チェックアウトは何時ですか？","チェックインのときに必ず確認しましょう。"]
+  ]},
+  {key:"restaurant",label:"🍽️ レストラン",items:[
+    ["A table for two, please.","2人用のテーブルをお願いします。","人数は for + 数字 で表現。"],
+    ["What do you recommend?","おすすめは何ですか？","地元のものを教えてもらえることが多い。"],
+    ["I'd like mine medium, please.","ミディアムでお願いします。","rare / medium-rare / medium / well-done を覚えよう。"],
+    ["Could we have the check, please?","お会計をお願いします。","アメリカでは check、イギリスでは bill。"],
+    ["I'm allergic to shellfish.","貝類アレルギーがあります。","アレルギーがある人は必ず覚えておきましょう。"],
+    ["Could I get a refill?","おかわりをいただけますか？","飲み物のおかわりは refill。"]
+  ]},
+  {key:"shopping",label:"🛍️ ショッピング",items:[
+    ["How much is this?","これはいくらですか？","最もシンプルな価格確認。"],
+    ["Do you have this in a larger size?","これのもっと大きいサイズはありますか？","larger を smaller や different color に変えて応用。"],
+    ["Can I try this on?","試着できますか？","try on = 試着する。"],
+    ["I'll take it.","これをいただきます。","購入決断の一言。"],
+    ["Is this on sale?","これはセール中ですか？","Do you have any discounts? も使える。"],
+    ["Can I get a receipt?","レシートをもらえますか？","税金還付やクレームに必要です。"]
+  ]},
+  {key:"trouble",label:"🆘 トラブル",items:[
+    ["Help! Call the police!","助けて！警察を呼んで！","緊急事態の第一声。大声でハッキリと。"],
+    ["I've lost my passport.","パスポートをなくしました。","まず大使館・領事館に連絡しましょう。"],
+    ["I need to go to the hospital.","病院に行く必要があります。","I don't feel well. と合わせて覚えよう。"],
+    ["Could you speak more slowly, please?","もっとゆっくり話していただけますか？","遠慮なく使ってOK。理解度が激変します。"],
+    ["I'd like to report a theft.","盗難を届け出たいです。","警察署で使うフレーズ。"],
+    ["I need a doctor immediately.","すぐに医師が必要です。","immediately = すぐに。"]
+  ]}
+];
+function renderPhrases(){
+  var tabs=document.getElementById("sceneTabs"),area=document.getElementById("phraseArea"),th="",ah="";
+  scenes.forEach(function(s,idx){
+    var ac=idx===0?" active":"";
+    th+="<button class=\"scene-btn"+ac+"\" id=\"sb-"+s.key+"\" onclick=\"showScene('"+s.key+"')\">"+s.label+"</button>";
+    ah+="<div class=\"phrase-group"+ac+"\" id=\"pg-"+s.key+"\"><div class=\"phrase-items\">";
+    s.items.forEach(function(p){
+      ah+="<div class=\"phrase-item\">"
+        +"<div class=\"phrase-en-row\"><div class=\"phrase-en\">"+p[0]+"</div>"
+        +"<button class=\"phrase-speak\" onclick=\"speakWord('"+p[0].replace(/'/g,"&#39;").replace(/"/g,"&quot;")+"')\">🔊 聞く</button></div>"
+        +"<div class=\"phrase-jp\">"+p[1]+"</div>"
+        +"<div class=\"phrase-tip\">"+p[2]+"</div></div>";
+    });
+    ah+="</div></div>";
+  });
+  tabs.innerHTML=th;area.innerHTML=ah;
+}
+function showScene(key){
+  document.querySelectorAll(".phrase-group").forEach(function(g){g.classList.remove("active");});
+  document.querySelectorAll(".scene-btn").forEach(function(b){b.classList.remove("active");});
+  var pg=document.getElementById("pg-"+key),sb=document.getElementById("sb-"+key);
+  if(pg)pg.classList.add("active");if(sb)sb.classList.add("active");
+}
+
+/* ===================================================
+   QUIZ
+   =================================================== */
+var qMode="all",qData=[],qIdx=0,qScore=0,qAns=false;
+var staticQ=[
+  {t:"単語",q:"reservation",h:"旅行でよく使う単語",o:["予約","出発","目的地","荷物"],a:0,e:"reservation は予約。I have a reservation. でホテルやレストランのチェックインに使えます。"},
+  {t:"文法",q:"Could you ___ me?",h:"丁寧な依頼の助動詞",o:["helping","help","helped","to help"],a:1,e:"Could you + 動詞の原形 が正しい形。助動詞の後は動詞の原形が来ます。"},
+  {t:"単語",q:"emergency",h:"緊急時に使う単語",o:["アレルギー","救急車","緊急事態","警察"],a:2,e:"emergency は緊急事態。This is an emergency! と覚えましょう。"},
+  {t:"文法",q:"タクシーはどこで乗れますか？",h:"Where から始まる疑問文",o:["Where is taxi?","Where can I get a taxi?","Where taxi can I get?","I can where get?"],a:1,e:"Where can I get a ~? が正しい疑問文の語順。"},
+  {t:"単語",q:"available",h:"空席確認などで使う",o:["おすすめの","利用可能な","豪華な","予約済みの"],a:1,e:"available は利用可能な・空いている。Is this seat available? で確認できます。"},
+  {t:"文法",q:"朝食が含まれているか確認するとき",h:"Is ~ included? の形",o:["Is included breakfast?","Is breakfast included?","Breakfast is include?","Does breakfast include?"],a:1,e:"Is ~ included? が正しい語順。"},
+  {t:"単語",q:"delicious",h:"食事をほめる単語",o:["おいしい","辛い","新鮮な","安い"],a:0,e:"delicious はおいしい。This is absolutely delicious! と言えば喜ばれます。"},
+  {t:"文法",q:"財布が盗まれました（受動態）",h:"be動詞 + 過去分詞",o:["My wallet stole.","My wallet was stolen.","Stolen my wallet.","My wallet is steal."],a:1,e:"was stolen = 盗まれた（過去形の受動態）。be動詞 + 過去分詞の形です。"},
+  {t:"単語",q:"prescription",h:"病院・薬局で使う単語",o:["注射","処方箋","血圧計","包帯"],a:1,e:"prescription は処方箋。"},
+  {t:"フレーズ",q:"英語が速くて聞き取れないとき",h:"速度を落としてもらう依頼",o:["Speak English again.","I don't know English.","Could you speak more slowly, please?","Please repeat English."],a:2,e:"Could you speak more slowly, please? 遠慮せず使いましょう！"}
+];
+function setQMode(m){
+  qMode=m;
+  document.querySelectorAll(".qmode-btn").forEach(function(b){b.classList.remove("active");});
+  document.getElementById("qm-"+m).classList.add("active");
+}
+function buildQuiz(){
+  var pool=[];
+  if(qMode==="weak"){
+    var wkeys=Object.keys(S.wrong);
+    if(wkeys.length===0){showNotif("要復習単語はありません！まず学習しましょう。");return false;}
+    wkeys.slice(0,10).forEach(function(w){
+      var v=VOCAB_DATA.filter(function(x){return x[0]===w;})[0];
+      if(!v)return;
+      var wr=[];
+      while(wr.length<3){var r=VOCAB_DATA[Math.floor(Math.random()*VOCAB_DATA.length)];if(r[1]!==v[1]&&wr.indexOf(r[1])<0)wr.push(r[1]);}
+      var opts=[v[1]].concat(wr).sort(function(){return Math.random()-.5;});
+      pool.push({t:"要復習",q:v[0],h:"カテゴリ: "+(CAT_LABELS[v[2]]||v[2]),o:opts,a:opts.indexOf(v[1]),e:v[0]+" は「"+v[1]+"」です。",word:v[0]});
+    });
+  } else if(qMode==="vocab"){
+    for(var i=0;i<10;i++){
+      var v=VOCAB_DATA[Math.floor(Math.random()*VOCAB_DATA.length)];
+      var wr=[];
+      while(wr.length<3){var r=VOCAB_DATA[Math.floor(Math.random()*VOCAB_DATA.length)];if(r[1]!==v[1]&&wr.indexOf(r[1])<0)wr.push(r[1]);}
+      var opts=[v[1]].concat(wr).sort(function(){return Math.random()-.5;});
+      pool.push({t:"単語",q:v[0],h:"カテゴリ: "+(CAT_LABELS[v[2]]||v[2]),o:opts,a:opts.indexOf(v[1]),e:v[0]+" は「"+v[1]+"」です。",word:v[0]});
+    }
+  } else {
+    var dyn=[];
+    for(var i=0;i<5;i++){
+      var v=VOCAB_DATA[Math.floor(Math.random()*VOCAB_DATA.length)];
+      var wr=[];
+      while(wr.length<3){var r=VOCAB_DATA[Math.floor(Math.random()*VOCAB_DATA.length)];if(r[1]!==v[1]&&wr.indexOf(r[1])<0)wr.push(r[1]);}
+      var opts=[v[1]].concat(wr).sort(function(){return Math.random()-.5;});
+      dyn.push({t:"単語",q:v[0],h:"カテゴリ: "+(CAT_LABELS[v[2]]||v[2]),o:opts,a:opts.indexOf(v[1]),e:v[0]+" は「"+v[1]+"」です。",word:v[0]});
+    }
+    pool=staticQ.concat(dyn).sort(function(){return Math.random()-.5;}).slice(0,15);
+  }
+  qData=pool;return true;
+}
+function renderQ(){
+  var card=document.getElementById("quizCard"),sc=document.getElementById("scoreCard");
+  sc.classList.remove("show");
+  if(qIdx>=qData.length){
+    card.style.display="none";
+    document.querySelector(".quiz-progress").style.display="none";
+    sc.classList.add("show");
+    var pct=Math.round(qScore/qData.length*100);
+    var ranks=[["😢","要復習","0%〜49%"],["🙂","まずまず","50%〜69%"],["😊","よくできました","70%〜89%"],["🎉","優秀！","90%〜100%"]];
+    var ri=pct>=90?3:pct>=70?2:pct>=50?1:0;
+    var xpEarned=Math.round(qScore*10);
+    addXP(xpEarned,"テスト完了");
+    S.quizDone++;logActivity("quiz","確認テスト "+qScore+"/"+qData.length+"問正解",xpEarned);saveS();
+    sc.innerHTML="<div class=\"score-rank\">"+ranks[ri][0]+"</div>"
+      +"<div class=\"score-big\">"+qScore+"/"+qData.length+"</div>"
+      +"<div class=\"score-xp\">+"+xpEarned+" XP 獲得！</div>"
+      +"<p>正解率 "+pct+"% — "+ranks[ri][1]+"</p>"
+      +"<button class=\"restart-btn\" onclick=\"restartQ()\">もう一度挑戦</button>";
+    updateDash();return;
+  }
+  card.style.display="flex";
+  document.querySelector(".quiz-progress").style.display="flex";
+  qAns=false;
+  var q=qData[qIdx];
+  document.getElementById("progressFill").style.width=(qIdx/qData.length*100)+"%";
+  document.getElementById("progressText").textContent=(qIdx+1)+" / "+qData.length;
+  var oh=q.o.map(function(op,i){return "<button class=\"quiz-opt\" onclick=\"selA("+i+")\">"+op+"</button>";}).join("");
+  card.innerHTML="<div class=\"quiz-type-label\">"+q.t+"問題</div>"
+    +"<div class=\"quiz-question\">"+q.q+"</div>"
+    +"<div class=\"quiz-hint\">"+q.h+"</div>"
+    +(q.word?"<button class=\"quiz-speak\" onclick=\"speakWord('"+q.word.replace(/'/g,"&#39;")+"')\">🔊 発音を聞く</button>":"")
+    +"<div class=\"quiz-options\">"+oh+"</div>"
+    +"<div class=\"quiz-feedback\" id=\"qfb\"></div>"
+    +"<button class=\"next-btn\" id=\"nextBtn\" onclick=\"nextQ()\">"+(qIdx+1<qData.length?"次の問題 →":"結果を見る")+"</button>";
+}
+function selA(i){
+  if(qAns)return;qAns=true;
+  var q=qData[qIdx],opts=document.querySelectorAll(".quiz-opt");
+  opts[i].classList.add(i===q.a?"correct":"wrong");
+  if(i!==q.a)opts[q.a].classList.add("correct");
+  if(i===q.a){qScore++;if(q.word)markCorrect(q.word);}
+  else{if(q.word)markWrong(q.word);}
+  var fb=document.getElementById("qfb");
+  fb.textContent=(i===q.a?"✓ 正解！ ":"✗ 不正解。")+q.e;
+  fb.className="quiz-feedback show "+(i===q.a?"correct":"wrong");
+  document.getElementById("nextBtn").classList.add("show");
+}
+function nextQ(){qIdx++;renderQ();}
+function restartQ(){
+  if(!buildQuiz())return;
+  qIdx=0;qScore=0;
+  document.getElementById("quizCard").style.display="flex";
+  document.querySelector(".quiz-progress").style.display="flex";
+  renderQ();
+}
+
+/* ===================================================
+   INIT
+   =================================================== */
+loadS();
+updateTopBar();
+updateDash();
+renderCatPills();
+renderVocab();
+renderGrammar();
+renderPhrases();
+renderFCCatPills();
+
+// Auto-start quiz
+if(buildQuiz()){qIdx=0;qScore=0;renderQ();}
+</script>
+</body>
+</html>
