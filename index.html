@@ -245,6 +245,44 @@ main{max-width:1100px;margin:0 auto;padding:28px 20px 80px;}
   .fc-word{font-size:30px;}.fc-btn{padding:10px 20px;font-size:13px;}
   .vl-cat{display:none;}.vl-word{width:130px;}
 }
+
+/* ── AI LESSON ── */
+.ai-section{max-width:700px;}
+.ai-hero{background:linear-gradient(135deg,#1a1f2e 0%,#0d1117 100%);border:1px solid var(--purple);border-radius:16px;padding:28px;margin-bottom:20px;text-align:center;}
+.ai-hero h2{font-size:22px;font-weight:900;margin-bottom:8px;}
+.ai-hero p{color:var(--muted);font-size:13px;line-height:1.7;margin-bottom:20px;}
+.ai-stats-preview{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px;text-align:center;}
+.ai-stat{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:12px 8px;}
+.ai-stat .n{font-size:22px;font-weight:900;color:var(--gold);}
+.ai-stat .l{font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-top:2px;}
+.ai-gen-btn{padding:14px 36px;background:linear-gradient(135deg,var(--purple),var(--blue));color:#fff;border:none;border-radius:12px;font-family:"Nunito",sans-serif;font-size:15px;font-weight:800;cursor:pointer;transition:opacity .15s;letter-spacing:-.2px;}
+.ai-gen-btn:hover{opacity:.88;}
+.ai-gen-btn:disabled{opacity:.5;cursor:not-allowed;}
+.ai-loading{text-align:center;padding:32px;display:none;}
+.ai-loading .spin{font-size:36px;animation:spin 1s linear infinite;display:inline-block;margin-bottom:12px;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.ai-loading p{color:var(--muted);font-size:13px;}
+.ai-result{display:none;}
+.ai-result-card{background:var(--surface);border:1.5px solid var(--border);border-radius:14px;margin-bottom:14px;overflow:hidden;}
+.ai-result-card.highlight{border-color:var(--purple);}
+.ai-result-header{padding:14px 18px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border);background:var(--surface2);}
+.ai-result-header .ico{font-size:20px;}
+.ai-result-header .ttl{font-size:14px;font-weight:800;}
+.ai-result-body{padding:16px 18px;font-size:13px;line-height:1.9;color:var(--text);}
+.ai-result-body strong{color:var(--gold);}
+.ai-result-body .tag{display:inline-block;background:rgba(188,140,255,.15);border:1px solid rgba(188,140,255,.4);color:var(--purple);padding:3px 10px;border-radius:12px;font-size:12px;font-weight:700;margin:3px 3px 3px 0;}
+.ai-result-body .ok-tag{background:rgba(63,185,80,.12);border-color:rgba(63,185,80,.4);color:var(--green);}
+.ai-result-body .warn-tag{background:rgba(248,113,113,.12);border-color:rgba(248,113,113,.35);color:var(--red);}
+.ai-result-body .step{display:flex;gap:10px;margin-bottom:10px;padding:10px 12px;background:var(--surface2);border-radius:8px;align-items:flex-start;}
+.ai-result-body .step-num{background:var(--purple);color:#fff;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0;margin-top:1px;}
+.ai-result-body .step-text{flex:1;}
+.ai-word-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;margin-top:4px;}
+.ai-word-item{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:9px 12px;cursor:pointer;transition:border-color .15s;}
+.ai-word-item:hover{border-color:var(--gold);}
+.ai-word-item .aw{font-size:14px;font-weight:800;}
+.ai-word-item .aj{font-size:11px;color:var(--muted);margin-top:2px;}
+.ai-regen-btn{display:block;width:100%;padding:12px;background:var(--surface2);border:1.5px solid var(--border);border-radius:10px;font-family:"Nunito",sans-serif;font-size:13px;font-weight:700;color:var(--muted);cursor:pointer;margin-top:6px;transition:all .15s;}
+.ai-regen-btn:hover{border-color:var(--purple);color:var(--purple);}
 </style>
 </head>
 <body>
@@ -265,6 +303,7 @@ main{max-width:1100px;margin:0 auto;padding:28px 20px 80px;}
   <button class="tab-btn" id="tab-grammar" onclick="showTab('grammar')">✏️ 文法</button>
   <button class="tab-btn" id="tab-phrases" onclick="showTab('phrases')">💬 フレーズ</button>
   <button class="tab-btn" id="tab-quiz" onclick="showTab('quiz')">🎯 テスト</button>
+  <button class="tab-btn" id="tab-ai" onclick="showTab('ai')">🤖 AI学習診断</button>
 </nav>
 
 <div class="notif" id="notifArea"></div>
@@ -362,6 +401,27 @@ main{max-width:1100px;margin:0 auto;padding:28px 20px 80px;}
     <div id="scoreCard" class="score-card"></div>
   </div>
 </section>
+
+<section id="ai" class="section">
+  <div class="ai-section">
+    <div class="ai-hero">
+      <h2>🤖 AI 学習レッスン再設計</h2>
+      <p>あなたの学習データをAIが分析し、今のレベルに最適化した<br>パーソナルレッスンを自動生成します。</p>
+      <div class="ai-stats-preview">
+        <div class="ai-stat"><div class="n" id="aiStudied">0</div><div class="l">学習済み語</div></div>
+        <div class="ai-stat"><div class="n" id="aiAcc">—</div><div class="l">正答率</div></div>
+        <div class="ai-stat"><div class="n" id="aiWeak">0</div><div class="l">要復習語</div></div>
+      </div>
+      <button class="ai-gen-btn" id="aiGenBtn" onclick="generateLesson()">✨ AIレッスンを生成する</button>
+    </div>
+    <div class="ai-loading" id="aiLoading">
+      <div class="spin">⚙️</div>
+      <p>学習データを分析中...<br>最適なレッスンを設計しています</p>
+    </div>
+    <div class="ai-result" id="aiResult"></div>
+  </div>
+</section>
+
 
 </main>
 
@@ -3521,6 +3581,7 @@ function showTab(id) {
   document.getElementById(id).classList.add("active");
   document.getElementById("tab-"+id).classList.add("active");
   if(id==="dash") updateDash();
+  if(id==="ai") updateAIStats();
 }
 
 /* ===================================================
@@ -3955,6 +4016,155 @@ function restartQ(){
   document.getElementById("quizCard").style.display="flex";
   document.querySelector(".quiz-progress").style.display="flex";
   renderQ();
+}
+
+
+/* ===================================================
+   AI LESSON GENERATOR
+   =================================================== */
+function updateAIStats() {
+  var studied = Object.keys(S.studied).length;
+  var weak = Object.keys(S.wrong).length;
+  var acc = S.totalQ > 0 ? Math.round(S.totalCorrect / S.totalQ * 100) + "%" : "—";
+  var el1 = document.getElementById("aiStudied");
+  var el2 = document.getElementById("aiAcc");
+  var el3 = document.getElementById("aiWeak");
+  if (el1) el1.textContent = studied;
+  if (el2) el2.textContent = acc;
+  if (el3) el3.textContent = weak;
+}
+
+function buildLearningReport() {
+  var studied = Object.keys(S.studied).length;
+  var weak = Object.keys(S.wrong);
+  var acc = S.totalQ > 0 ? Math.round(S.totalCorrect / S.totalQ * 100) : 0;
+  var lvlName = LEVEL_NAMES[S.level - 1] || "Beginner";
+
+  // Weak category analysis
+  var catWrong = {};
+  weak.forEach(function(w) {
+    var v = VOCAB_DATA.filter(function(x) { return x[0] === w; })[0];
+    if (v) catWrong[v[2]] = (catWrong[v[2]] || 0) + S.wrong[w];
+  });
+  var catWrongSorted = Object.keys(catWrong).sort(function(a, b) { return catWrong[b] - catWrong[a]; }).slice(0, 5);
+
+  // Studied category analysis
+  var catStudied = {};
+  Object.keys(S.studied).forEach(function(w) {
+    var v = VOCAB_DATA.filter(function(x) { return x[0] === w; })[0];
+    if (v) catStudied[v[2]] = (catStudied[v[2]] || 0) + 1;
+  });
+  var topStudied = Object.keys(catStudied).sort(function(a, b) { return catStudied[b] - catStudied[a]; }).slice(0, 3);
+
+  var weakWords = weak.slice(0, 15).map(function(w) {
+    return w + "(誤答" + S.wrong[w] + "回)";
+  }).join(", ");
+
+  var report = "【学習者データ】\n";
+  report += "レベル: " + S.level + " (" + lvlName + ")\n";
+  report += "学習済み単語数: " + studied + "語\n";
+  report += "テスト正答率: " + acc + "%\n";
+  report += "連続学習日数: " + S.streak + "日\n";
+  report += "要復習単語数: " + weak.length + "語\n";
+  if (weakWords) report += "要復習単語(上位): " + weakWords + "\n";
+  if (catWrongSorted.length) report += "弱点カテゴリ: " + catWrongSorted.map(function(c) { return (CAT_LABELS[c] || c) + "(" + catWrong[c] + "ミス)"; }).join(", ") + "\n";
+  if (topStudied.length) report += "よく学習したカテゴリ: " + topStudied.map(function(c) { return CAT_LABELS[c] || c; }).join(", ") + "\n";
+  return report;
+}
+
+async function generateLesson() {
+  var btn = document.getElementById("aiGenBtn");
+  var loading = document.getElementById("aiLoading");
+  var result = document.getElementById("aiResult");
+
+  btn.disabled = true;
+  loading.style.display = "block";
+  result.style.display = "none";
+  result.innerHTML = "";
+
+  var report = buildLearningReport();
+
+  var prompt = report + "\n上記の学習データを分析して、この学習者に最適化されたレッスンプランをJSON形式で作成してください。\n\n以下のJSON形式で回答してください（他のテキストは一切不要）:\n{\n  \"diagnosis\": \"学習状況の簡潔な診断（2〜3文）\",\n  \"level_assessment\": \"現在のレベル評価と次のステップ（1〜2文）\",\n  \"focus_categories\": [\"今週重点的に学ぶべきカテゴリ名（日本語）を3つ\"],\n  \"weak_points\": [\"具体的な弱点・改善点を3つ（各15字以内）\"],\n  \"strengths\": [\"強み・できていることを2つ（各15字以内）\"],\n  \"lesson_plan\": [\n    {\"day\": \"月・火\", \"task\": \"具体的な学習タスク\", \"duration\": \"10分\"},\n    {\"day\": \"水・木\", \"task\": \"具体的な学習タスク\", \"duration\": \"10分\"},\n    {\"day\": \"金・土・日\", \"task\": \"具体的な学習タスク\", \"duration\": \"15分\"}\n  ],\n  \"priority_words\": [\"今週集中して覚えるべき英単語を8語（英語のみ）\"],\n  \"advice\": \"モチベーションを上げる一言アドバイス（1文）\"\n}";
+
+  try {
+    var res = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: "claude-sonnet-4-20250514",
+        max_tokens: 1000,
+        messages: [{ role: "user", content: prompt }]
+      })
+    });
+    var data = await res.json();
+    var text = data.content && data.content[0] ? data.content[0].text : "";
+    var clean = text.replace(/```json|```/g, "").trim();
+    var plan = JSON.parse(clean);
+    renderLesson(plan);
+  } catch (e) {
+    result.style.display = "block";
+    result.innerHTML = "<div class=\"ai-result-card\"><div class=\"ai-result-body\" style=\"color:var(--red)\">⚠️ 生成に失敗しました。もう一度試してください。<br><small>" + e.message + "</small></div></div>";
+  }
+
+  loading.style.display = "none";
+  btn.disabled = false;
+}
+
+function renderLesson(plan) {
+  var result = document.getElementById("aiResult");
+  result.style.display = "block";
+
+  var priorityVocab = (plan.priority_words || []).map(function(w) {
+    var v = VOCAB_DATA.filter(function(x) { return x[0].toLowerCase() === w.toLowerCase().trim(); })[0];
+    if (v) return "<div class=\"ai-word-item\" onclick=\"speakWord('" + v[0].replace(/'/g, "&#39;") + "')\">"
+      + "<div class=\"aw\">🔊 " + v[0] + "</div><div class=\"aj\">" + v[1] + "</div></div>";
+    return "<div class=\"ai-word-item\"><div class=\"aw\">" + w + "</div><div class=\"aj\">単語帳で確認</div></div>";
+  }).join("");
+
+  var focusTags = (plan.focus_categories || []).map(function(c) {
+    return "<span class=\"tag\">" + c + "</span>";
+  }).join("");
+
+  var weakTags = (plan.weak_points || []).map(function(w) {
+    return "<span class=\"tag warn-tag\">⚠️ " + w + "</span>";
+  }).join("");
+
+  var strengthTags = (plan.strengths || []).map(function(s) {
+    return "<span class=\"tag ok-tag\">✅ " + s + "</span>";
+  }).join("");
+
+  var lessonSteps = (plan.lesson_plan || []).map(function(l) {
+    return "<div class=\"step\"><div class=\"step-num\">📅</div><div class=\"step-text\"><strong>" + l.day + "</strong>（" + l.duration + "）<br>" + l.task + "</div></div>";
+  }).join("");
+
+  result.innerHTML =
+    "<div class=\"ai-result-card highlight\">" +
+      "<div class=\"ai-result-header\"><span class=\"ico\">🧠</span><span class=\"ttl\">AI学習診断レポート</span></div>" +
+      "<div class=\"ai-result-body\">" + (plan.diagnosis || "") +
+        "<br><br><strong>レベル評価：</strong>" + (plan.level_assessment || "") +
+      "</div></div>" +
+
+    "<div class=\"ai-result-card\">" +
+      "<div class=\"ai-result-header\"><span class=\"ico\">🎯</span><span class=\"ttl\">今週の重点カテゴリ</span></div>" +
+      "<div class=\"ai-result-body\">" + focusTags + "</div></div>" +
+
+    "<div class=\"ai-result-card\">" +
+      "<div class=\"ai-result-header\"><span class=\"ico\">📊</span><span class=\"ttl\">弱点 & 強み</span></div>" +
+      "<div class=\"ai-result-body\">" + weakTags + "<br>" + strengthTags + "</div></div>" +
+
+    "<div class=\"ai-result-card\">" +
+      "<div class=\"ai-result-header\"><span class=\"ico\">📅</span><span class=\"ttl\">今週のレッスンプラン</span></div>" +
+      "<div class=\"ai-result-body\">" + lessonSteps + "</div></div>" +
+
+    "<div class=\"ai-result-card\">" +
+      "<div class=\"ai-result-header\"><span class=\"ico\">📖</span><span class=\"ttl\">今週の優先単語 8語（タップで発音）</span></div>" +
+      "<div class=\"ai-result-body\"><div class=\"ai-word-grid\">" + (priorityVocab || "<span style='color:var(--muted)'>単語帳から確認してください</span>") + "</div></div></div>" +
+
+    "<div class=\"ai-result-card\">" +
+      "<div class=\"ai-result-header\"><span class=\"ico\">💬</span><span class=\"ttl\">AIからのアドバイス</span></div>" +
+      "<div class=\"ai-result-body\" style=\"font-size:14px;font-weight:700;color:var(--purple)\">" + (plan.advice || "") + "</div></div>" +
+
+    "<button class=\"ai-regen-btn\" onclick=\"generateLesson()\">🔄 もう一度生成する</button>";
 }
 
 /* ===================================================
