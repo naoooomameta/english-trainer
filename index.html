@@ -2152,7 +2152,7 @@ function buildReport(){
   if(weak.length)r+='要復習単語(最大10語): '+weak.slice(0,10).join(', ')+'\n';
   return r;
 }
-function generateLesson(){
+async function generateLesson(){
   const btn=document.getElementById('aiGenBtn');
   const loading=document.getElementById('aiLoading');
   const result=document.getElementById('aiResult');
